@@ -1,0 +1,50 @@
+generated: '2026-07-18'
+method: derived
+status: candidate
+source: openapi/archil-openapi-original.yml
+note: >-
+  No official hosted/remote Archil MCP server was found (checked docs, the
+  archil-data GitHub org, and MCP registries as of 2026-07-18). This is a
+  DERIVED candidate tool list — one tool per Control Plane API operation — as a
+  starting point for an MCP server. Archil's serverless exec + parallel grep map
+  naturally to agent tools.
+server:
+  name: archil
+  transport: http
+tools:
+- name: list_disks
+  description: List all disks owned by the authenticated account.
+  source_operation: openapi/archil-openapi-original.yml#listDisks
+- name: create_disk
+  description: Create a new disk backed by an object-storage data source (idempotent by name+config).
+  source_operation: openapi/archil-openapi-original.yml#createDisk
+- name: get_disk
+  description: Get detailed information about a specific disk.
+  source_operation: openapi/archil-openapi-original.yml#getDisk
+- name: delete_disk
+  description: Delete a disk and all associated resources.
+  source_operation: openapi/archil-openapi-original.yml#deleteDisk
+- name: add_disk_user
+  description: Add an authorized user (disk token or AWS STS role) to a disk.
+  source_operation: openapi/archil-openapi-original.yml#addDiskUser
+- name: remove_disk_user
+  description: Remove an authorized user from a disk.
+  source_operation: openapi/archil-openapi-original.yml#removeDiskUser
+- name: exec_disk
+  description: Launch a serverless container with the disk mounted, run a command to completion, and shut down.
+  source_operation: openapi/archil-openapi-original.yml#execDisk
+- name: grep_disk
+  description: Search files under a directory on a disk for a regex, fanned out across ephemeral containers.
+  source_operation: openapi/archil-openapi-original.yml#grepDisk
+- name: exec_multi
+  description: Launch a container with multiple disks mounted, run a command, and shut down (atomic activation).
+  source_operation: openapi/archil-openapi-original.yml#exec
+- name: list_api_tokens
+  description: List all account API tokens.
+  source_operation: openapi/archil-openapi-original.yml#listApiTokens
+- name: create_api_token
+  description: Create a new account API token (value returned once).
+  source_operation: openapi/archil-openapi-original.yml#createApiToken
+- name: delete_api_token
+  description: Revoke and delete an API token.
+  source_operation: openapi/archil-openapi-original.yml#deleteApiToken

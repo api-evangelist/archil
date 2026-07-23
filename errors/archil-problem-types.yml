@@ -1,0 +1,41 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/archil-openapi-original.yml
+format: custom
+envelope:
+  shape: '{ "success": false, "error": "<message>" }'
+  schema: ErrorResponse
+  content_type: application/json
+  note: >-
+    Archil does NOT use RFC 9457 application/problem+json. All errors share a
+    single flat envelope with a boolean `success` and a human-readable `error`
+    string; the HTTP status carries the machine-readable class.
+problems:
+- status: 400
+  title: Bad request
+  meaning: Malformed request body or parameters.
+  operations: [createDisk, getDisk, deleteDisk, addDiskUser, removeDiskUser, execDisk, grepDisk, exec, createApiToken]
+- status: 401
+  title: Unauthorized
+  meaning: Missing or invalid API key in the Authorization header.
+  operations: [listDisks, createDisk, getDisk, deleteDisk, addDiskUser, removeDiskUser, execDisk, grepDisk, exec, listApiTokens, createApiToken, deleteApiToken]
+- status: 403
+  title: Access denied
+  meaning: Access denied (e.g., preview region not enabled).
+  operations: [createDisk]
+- status: 404
+  title: Not found
+  meaning: Disk or token with the given id does not exist.
+  operations: [getDisk, deleteDisk, execDisk, grepDisk, exec, deleteApiToken]
+- status: 409
+  title: Conflict
+  meaning: A disk with this name already exists but its configuration differs. (When name AND config match, createDisk instead returns 200 — idempotent.)
+  operations: [createDisk]
+- status: 500
+  title: Internal server error
+  meaning: Unexpected server-side error.
+  operations: [listDisks, createDisk, getDisk, deleteDisk, addDiskUser, removeDiskUser, execDisk, grepDisk, exec, listApiTokens, createApiToken, deleteApiToken]
+- status: 504
+  title: Gateway timeout
+  meaning: Serverless command timed out within the request budget.
+  operations: [execDisk, exec]

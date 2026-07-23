@@ -1,0 +1,259 @@
+openapi: 3.1.0
+info:
+  title: Archil Control Plane API Tokens Disk Users API
+  description: "The Archil Control Plane API provides programmatic access to manage disks,\nmounts, and API keys in the Archil distributed filesystem platform.\n\nAPI keys authenticate requests to this control plane and are scoped to\nyour account. They are distinct from *disk tokens*, which are per-disk\ncredentials used by clients when mounting a disk.\n\n## Authentication\n\nAll endpoints require an API key:\n\n```\nAuthorization: {API_KEY}\n```\n\nCreate API keys in the [Archil Console](https://console.archil.com) or via the API.\n\n## Response Format\n\nAll responses use a consistent envelope:\n\n```json\n{\n  \"success\": true,\n  \"data\": { ... }\n}\n```\n\nOr on error:\n\n```json\n{\n  \"success\": false,\n  \"error\": \"Error message\"\n}\n```\n"
+  version: 1.0.0
+  contact:
+    email: support@archil.com
+    url: https://archil.com
+servers:
+- url: https://control.green.us-east-1.aws.prod.archil.com
+  description: AWS US East (N. Virginia) — aws-us-east-1
+- url: https://control.green.eu-west-1.aws.prod.archil.com
+  description: AWS EU West (Ireland) — aws-eu-west-1
+- url: https://control.green.us-west-2.aws.prod.archil.com
+  description: AWS US West (Oregon) — aws-us-west-2
+- url: https://control.blue.us-central1.gcp.prod.archil.com
+  description: GCP US Central (Iowa) — gcp-us-central1
+security:
+- ApiKeyAuth: []
+tags:
+- name: Disk Users
+  description: Manage authorized users on disks
+paths:
+  /api/disks/{id}/users:
+    post:
+      operationId: addDiskUser
+      summary: Add user to disk
+      description: 'Adds an authorized user to a disk. Users can authenticate via:
+
+        - **token**: A shared token with a nickname and 4-character suffix
+
+        - **awssts**: AWS STS role assumption with an IAM principal ARN
+
+        '
+      tags:
+      - Disk Users
+      parameters:
+      - $ref: '#/components/parameters/DiskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiskUser'
+      responses:
+        '201':
+          description: User added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_AuthorizedUser'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/disks/{id}/users/{userType}:
+    delete:
+      operationId: removeDiskUser
+      summary: Remove user from disk
+      description: Removes an authorized user from a disk.
+      tags:
+      - Disk Users
+      parameters:
+      - $ref: '#/components/parameters/DiskId'
+      - name: userType
+        in: path
+        required: true
+        description: The type of user authentication
+        schema:
+          type: string
+          enum:
+          - token
+          - awssts
+      - name: identifier
+        in: query
+        required: false
+        description: 'Identifier of the user to remove, as returned in the creation or list response. For awssts users, this is the IAM ARN.
+
+          '
+        schema:
+          type: string
+      - name: principal
+        in: query
+        required: false
+        deprecated: true
+        description: Use identifier instead.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: User removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_Message'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  responses:
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Invalid or missing authentication credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    ApiResponse_Message:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+    DiskUser:
+      oneOf:
+      - $ref: '#/components/schemas/TokenUser'
+      - $ref: '#/components/schemas/AwsStsUser'
+      discriminator:
+        propertyName: type
+        mapping:
+          token: '#/components/schemas/TokenUser'
+          awssts: '#/components/schemas/AwsStsUser'
+    ApiResponse_AuthorizedUser:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/AuthorizedUser'
+    TokenUser:
+      type: object
+      required:
+      - type
+      - nickname
+      properties:
+        type:
+          type: string
+          enum:
+          - token
+        principal:
+          type: string
+          maxLength: 2048
+          deprecated: true
+          description: 'Deprecated. Client-provided token. If omitted, the server generates a cryptographically secure token and returns it in the response.
+
+            '
+        nickname:
+          type: string
+          maxLength: 255
+        tokenSuffix:
+          type: string
+          minLength: 4
+          maxLength: 4
+          deprecated: true
+          description: 'Deprecated. Last 4 characters of the token. Required when principal is provided; ignored when the server generates the token.
+
+            '
+    ErrorResponse:
+      type: object
+      required:
+      - success
+      - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
+    AuthorizedUser:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - token
+          - awssts
+        principal:
+          type: string
+          deprecated: true
+          description: 'Use identifier instead. Only populated for awssts type (the IAM ARN).
+
+            '
+        nickname:
+          type: string
+        tokenSuffix:
+          type: string
+        token:
+          type: string
+          description: 'The generated disk token (used by clients when mounting the disk). Only present in the response when the server generates the token (i.e. principal was not provided). This value is shown exactly once and cannot be retrieved again.
+
+            '
+        identifier:
+          type: string
+          description: 'Stable identifier for this user, returned in creation and list responses. Use this value with DELETE /api/disks/{id}/users/{type}?identifier={identifier} to remove the user. For awssts users, this is the IAM ARN.
+
+            '
+        createdAt:
+          type: string
+          format: date-time
+    AwsStsUser:
+      type: object
+      required:
+      - type
+      - principal
+      properties:
+        type:
+          type: string
+          enum:
+          - awssts
+        principal:
+          type: string
+          description: IAM principal ARN
+          maxLength: 2048
+  parameters:
+    DiskId:
+      name: id
+      in: path
+      required: true
+      description: Disk ID (format `dsk-{16 hex chars}`)
+      schema:
+        type: string
+        pattern: ^dsk-[0-9a-f]{16}$
+        example: dsk-0123456789abcdef
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: API key

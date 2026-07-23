@@ -1,0 +1,40 @@
+generated: '2026-07-18'
+method: searched
+source: https://docs.archil.com/reference/disk-cli
+clis:
+- name: disk
+  kind: control-plane
+  runtime: node
+  package: disk (npm)
+  docs: https://docs.archil.com/reference/disk-cli
+  install:
+  - npm install -g disk
+  - npx disk <command>
+  description: >-
+    Node CLI (shipped in the `disk` npm package) for control-plane operations:
+    create/list/inspect/delete disks, manage disk users and API keys, and run
+    `disk exec` to launch a serverless container with the disk mounted.
+  command_groups:
+  - name: disks
+    commands: [create, list, get, delete]
+  - name: users
+    commands: [add, remove]
+  - name: tokens
+    commands: [create, list, delete]
+  - name: exec
+    commands: [exec, grep]
+  key_flows:
+  - "disk create <name> --source s3://<bucket>   # create an S3-backed disk"
+  - "disk exec <disk> -- <command>               # run a command in a serverless container with the disk mounted"
+- name: archil
+  kind: mount
+  runtime: native (Linux)
+  docs: https://docs.archil.com/reference/archil-cli
+  description: >-
+    Linux system CLI that mounts an Archil disk as a real local folder over FUSE.
+    Includes `archil prefetch` to warm the client cache before operations.
+  command_groups:
+  - name: mount
+    commands: [mount, unmount]
+  - name: cache
+    commands: [prefetch]

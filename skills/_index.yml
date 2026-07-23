@@ -1,0 +1,16 @@
+generated: '2026-07-18'
+method: generated
+source: openapi/archil-openapi-original.yml
+skills:
+- file: archil-create-and-mount-disk.md
+  name: Create an S3-backed disk and authorize a client
+  api: openapi/archil-openapi-original.yml
+  operations: [createDisk, addDiskUser, getDisk]
+- file: archil-serverless-exec.md
+  name: Run a command and search files on a disk (serverless)
+  api: openapi/archil-openapi-original.yml
+  operations: [execDisk, grepDisk, exec]
+- file: archil-manage-api-tokens.md
+  name: Manage Control Plane API tokens
+  api: openapi/archil-openapi-original.yml
+  operations: [createApiToken, listApiTokens, deleteApiToken]

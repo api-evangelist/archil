@@ -1,0 +1,71 @@
+generated: '2026-07-18'
+method: derived
+source: openapi/archil-openapi-original.yml
+entities:
+- name: Account
+  description: The authenticated account (identified by API key); root owner of disks and tokens.
+  id_field: null
+- name: Organization
+  description: Grouping of disks by team/environment for shared access and billing.
+  id_field: organization
+- name: Disk
+  description: A multi-tenant, S3-backed POSIX filesystem. Unit of access isolation.
+  schema: DiskResponse
+  id_field: id
+  key_fields: [id, name, organization, status, provider, region, createdAt, lastAccessed, dataSize, monthlyUsage]
+- name: MountConfig
+  description: A data source (object-storage bucket) synchronized into a disk.
+  schema: MountConfigResponse
+  key_fields: [bucketName, bucketEndpoint, bucketPrefix, sessionId]
+  variants: [S3Mount, GCSMount, R2Mount, S3CompatibleMount, AzureBlobMount]
+- name: AuthorizedUser
+  description: An authorization principal on a disk — a disk token or an AWS STS role.
+  schema: AuthorizedUser
+  key_fields: [type, principal, nickname, tokenSuffix, identifier, createdAt]
+  variants: [TokenUser, AwsStsUser]
+- name: ConnectedClient
+  description: A client currently mounting a disk.
+  schema: ConnectedClient
+  key_fields: [id, ipAddress, connectedAt]
+- name: DiskMetrics
+  description: Usage metrics for a disk.
+  schema: DiskMetrics
+  key_fields: [dataTransfer, requests, avgResponseTime]
+- name: ApiToken
+  description: An account-scoped API key for the Control Plane.
+  schema: ApiTokenResponse
+  id_field: id
+  key_fields: [id, name, description, tokenSuffix, createdAt, lastUsedAt]
+relationships:
+- from: Account
+  to: Disk
+  type: has_many
+  via: (account scope)
+- from: Account
+  to: ApiToken
+  type: has_many
+  via: (account scope)
+- from: Organization
+  to: Disk
+  type: has_many
+  via: organization
+- from: Disk
+  to: MountConfig
+  type: has_many
+  via: mounts
+- from: Disk
+  to: AuthorizedUser
+  type: has_many
+  via: authorizedUsers
+- from: Disk
+  to: ConnectedClient
+  type: has_many
+  via: connectedClients
+- from: Disk
+  to: DiskMetrics
+  type: has_one
+  via: metrics
+notes: >-
+  Branches & checkpoints are copy-on-write forks of a Disk that share the parent
+  disk's credentials/authorizedUsers (not modeled as separate entities in the
+  Control Plane schemas). id-prefixes are not published in the object reference.

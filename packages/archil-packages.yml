@@ -1,0 +1,49 @@
+generated: '2026-07-18'
+method: searched
+source: https://docs.archil.com/sdks/typescript
+packages:
+- language: javascript
+  registry: npm
+  name: disk
+  url: https://www.npmjs.com/package/disk
+  install: npm install disk
+  version: 0.8.21
+  description: Pure-JS control-plane client and CLI for Archil disks (create/list/inspect
+    disks, manage disk users, run disk.exec).
+  official: true
+- language: javascript
+  registry: npm
+  name: "@archildata/native"
+  url: https://www.npmjs.com/package/@archildata/native
+  description: Native bindings powering in-process bash execution and the filesystem
+    adapter (used by just-bash mounting).
+  official: true
+- language: python
+  registry: pypi
+  name: archil
+  url: https://pypi.org/project/archil/
+  install: pip install archil
+  version: 0.8.23
+  description: Pure-Python control-plane client and S3-compatible object API for Archil
+    disks; every method has an .aio async variant. Requires Python 3.10+.
+  official: true
+- language: hcl
+  registry: terraform
+  name: archil-data/archil
+  url: https://registry.terraform.io/providers/archil-data/archil
+  description: Terraform provider to manage Archil disks, disk users, and API tokens
+    as infrastructure-as-code.
+  repository: https://github.com/archil-data/terraform-provider-archil
+  official: true
+- language: go
+  registry: github
+  name: archil-data/terraform-provider-archil
+  url: https://github.com/archil-data/terraform-provider-archil
+  description: Source for the Archil Terraform provider.
+  official: true
+kubernetes:
+- name: Archil Kubernetes CSI Driver
+  url: https://docs.archil.com/reference/csi-driver
+  description: Container Storage Interface driver to mount Archil disks as Kubernetes
+    volumes.
+  official: true

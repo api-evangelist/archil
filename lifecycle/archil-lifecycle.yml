@@ -1,0 +1,30 @@
+generated: '2026-07-18'
+method: searched
+source: https://docs.archil.com/reference/changelog
+versioning:
+  scheme: dated
+  api_version: '1.0.0'
+  client_scheme: semver (v0.8.x)
+  docs: https://docs.archil.com/reference/changelog
+deprecation:
+  policy_url: null
+  sunset_header: null
+  note: >-
+    No formal deprecation/Sunset-header policy is published as of 2026-07-18.
+    The changelog is additive; no deprecated operations are declared in the
+    OpenAPI (none carry `deprecated: true`).
+sla:
+  url: https://docs.archil.com/details/security
+  note: >-
+    Custom SLA terms are offered to Enterprise plan customers; no public
+    numeric uptime target is published.
+status_page: https://status.archil.com
+changelog: https://docs.archil.com/reference/changelog
+regions:
+  docs: https://docs.archil.com/reference/regions
+  available:
+  - aws-us-east-1 (N. Virginia)
+  - aws-eu-west-1 (Ireland)
+  - aws-us-west-2 (Oregon)
+  - gcp-us-central1 (Iowa)
+deprecated_operations: []

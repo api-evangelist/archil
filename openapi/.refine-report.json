@@ -1,0 +1,20 @@
+{
+  "provider": "archil",
+  "sources": [
+    "archil-api-tokens-api-openapi.yml",
+    "archil-disk-users-api-openapi.yml",
+    "archil-disks-api-openapi.yml",
+    "archil-serverless-execution-api-openapi.yml"
+  ],
+  "outputs": [
+    "archil-api-tokens-api-openapi.yml",
+    "archil-disk-users-api-openapi.yml",
+    "archil-disks-api-openapi.yml",
+    "archil-serverless-execution-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}

@@ -1,0 +1,29 @@
+generated: '2026-07-18'
+method: searched
+source: https://docs.archil.com/reference/changelog
+scheme: dated (organized by month/year; client releases carry v0.8.x version numbers)
+current_client_version: v0.8.x
+entries:
+- date: '2026-06'
+  highlights:
+  - S3-compatible API supports appends via AppendObject for log-style files (up to 1 MiB per call).
+  - Python and TypeScript SDKs gained large-object and bulk write operations with automatic multipart uploads.
+  - S3-compatible API supports writes via PutObject and DeleteObject.
+  - Python SDK (`archil` on PyPI) launched with control-plane functionality and S3-compatible object API.
+  - Parallel search launched for disk.grep across directories.
+  - Branches & checkpoints became generally available in all AWS regions.
+  breaking: false
+  additions: true
+- date: '2026-05'
+  highlights:
+  - Added `archil prefetch` command to warm the client cache before operations.
+  breaking: false
+  additions: true
+- date: '2026-04'
+  highlights:
+  - Read-only S3-compatible API launched for accessing disks via standard S3 clients.
+  - Serverless execution launched with disk.exec(command).
+  - TypeScript SDK (`disk` npm package) launched for control-plane operations.
+  - Native macOS app launched for mounting disks via the FSKit framework.
+  breaking: false
+  additions: true

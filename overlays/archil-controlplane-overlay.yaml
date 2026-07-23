@@ -1,0 +1,35 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Archil Control Plane API
+  version: 1.0.0
+extends: openapi/archil-openapi-original.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-enriched: '2026-07-18'
+    x-api-category: cloud-storage
+    x-auth-style: api-key
+    x-idempotency: idempotent-create-by-name
+    x-pagination: cursor
+    x-error-envelope: '{success, error}'
+- target: $.info
+  update:
+    x-artifacts:
+      authentication: authentication/archil-authentication.yml
+      conventions: conventions/archil-conventions.yml
+      errors: errors/archil-problem-types.yml
+      data_model: data-model/archil-data-model.yml
+      lifecycle: lifecycle/archil-lifecycle.yml
+      packages: packages/archil-packages.yml
+      cli: cli/archil-cli.yml
+      skills: skills/_index.yml
+- target: $.tags
+  update:
+  - name: Disks
+    description: Create, list, inspect, and delete S3-backed disks.
+  - name: Disk Users
+    description: Manage disk authorization principals (disk tokens, AWS STS roles).
+  - name: Serverless Execution
+    description: Run bash commands and parallel grep directly against disk data.
+  - name: API Tokens
+    description: Manage account-scoped Control Plane API keys.

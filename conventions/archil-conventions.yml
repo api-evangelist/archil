@@ -1,0 +1,49 @@
+generated: '2026-07-18'
+method: searched
+source: https://docs.archil.com/api-reference/introduction
+authentication:
+  style: api-key
+  scheme: ApiKeyAuth
+  location: header
+  header: Authorization
+  value_format: "{API_KEY}"
+  note: >-
+    Account-scoped API keys authenticate the Control Plane. These are distinct
+    from per-disk mount tokens (disk tokens / AWS STS role assumption) used by
+    clients when mounting a disk. See authentication/archil-authentication.yml.
+response_envelope:
+  success: '{ "success": true, "data": { ... } }'
+  error: '{ "success": false, "error": "<message>" }'
+  note: All responses (success and error) share the {success, data|error} envelope. See errors/archil-problem-types.yml.
+idempotency:
+  supported: true
+  mechanism: idempotent-create-by-name
+  header: null
+  detail: >-
+    createDisk is idempotent on (name + configuration): repeating a create with
+    a disk name that already exists AND a matching configuration returns 200
+    with the existing disk instead of creating a duplicate; a name collision
+    with a DIFFERING configuration returns 409. DELETE operations are idempotent
+    by HTTP semantics. There is no global Idempotency-Key header.
+  source: openapi/archil-openapi-original.yml#createDisk
+pagination:
+  style: cursor
+  params: [cursor]
+  detail: listDisks accepts a `cursor` query parameter carried from a previous response.
+  source: openapi/archil-openapi-original.yml#listDisks
+versioning:
+  style: dated
+  api_version: '1.0.0'
+  detail: See lifecycle/archil-lifecycle.yml and changelog/archil-changelog.yml.
+rate_limiting:
+  signaled: false
+  detail: No rate-limit response headers are documented; control-plane operations are not billed.
+regions:
+  style: regional-hosts
+  detail: >-
+    The base host encodes the region (control.<color>.<region>.<cloud>.prod.archil.com).
+    Four regions: aws-us-east-1, aws-eu-west-1, aws-us-west-2, gcp-us-central1.
+cross_links:
+  errors: errors/archil-problem-types.yml
+  lifecycle: lifecycle/archil-lifecycle.yml
+  authentication: authentication/archil-authentication.yml

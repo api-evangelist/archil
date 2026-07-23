@@ -1,25 +1,201 @@
 aid: archil
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/archil.png
 name: Archil
-description: Archil is a company surfaced as a portfolio company of felicis and added to the API Evangelist
-  network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Archil is the cloud filesystem for AI. It turns an existing object-storage
+  bucket (Amazon S3, Google Cloud Storage, Cloudflare R2, Azure Blob, MinIO,
+  Wasabi, Backblaze B2, DigitalOcean Spaces) into an unlimited, POSIX-compatible
+  local disk that thousands of machines can mount at once — live, in place, and
+  faster than local disk. A single multi-tenant "disk" caches active data in a
+  high-speed layer, supports copy-on-write branches and checkpoints for isolated
+  agent and CI fan-out, and can run serverless bash and parallel grep directly
+  against the data with no separate sandbox. Archil exposes a REST Control Plane
+  API for managing disks, disk users, API tokens, and serverless execution, plus
+  first-party TypeScript and Python SDKs, a `disk` CLI, a Linux `archil` mount
+  CLI, a Kubernetes CSI driver, a Terraform provider, and an S3-compatible HTTP
+  API. Founded 2024, backed by Felicis, Y Combinator, General Catalyst, Peak XV,
+  and Standard Capital. Added to the API Evangelist network from the Felicis
+  portfolio and enriched by the pipeline.
 url: https://raw.githubusercontent.com/api-evangelist/archil/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
 x-backed-by:
 - felicis
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: producer
+x-tier-reason: enriched-from-portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-18'
 tags:
 - Company
-apis: []
+- Cloud Storage
+- Filesystem
+- Object Storage
+- Artificial Intelligence
+- Infrastructure
+- Developer Tools
+- Serverless
+- Data
+- S3
+apis:
+- aid: archil:archil-api-tokens-api
+  name: Archil API Tokens API
+  description: >-
+    Manage API keys (also called API tokens) used to authenticate Control Plane API requests. Distinct
+    from disk tokens.
+  humanURL: https://docs.archil.com/api-reference/introduction
+  baseURL: https://control.green.us-east-1.aws.prod.archil.com
+  tags:
+  - API Tokens
+  properties:
+  - type: OpenAPI
+    url: openapi/archil-api-tokens-api-openapi.yml
+  - type: Authentication
+    url: authentication/archil-authentication.yml
+  - type: ErrorCatalog
+    url: errors/archil-problem-types.yml
+  - type: DataModel
+    url: data-model/archil-data-model.yml
+  - type: Conventions
+    url: conventions/archil-conventions.yml
+  - type: Idempotency
+    url: conventions/archil-conventions.yml
+- aid: archil:archil-disk-users-api
+  name: Archil Disk Users API
+  description: Manage authorized users on disks
+  humanURL: https://docs.archil.com/api-reference/introduction
+  baseURL: https://control.green.us-east-1.aws.prod.archil.com
+  tags:
+  - Disk Users
+  properties:
+  - type: OpenAPI
+    url: openapi/archil-disk-users-api-openapi.yml
+  - type: Authentication
+    url: authentication/archil-authentication.yml
+  - type: ErrorCatalog
+    url: errors/archil-problem-types.yml
+  - type: DataModel
+    url: data-model/archil-data-model.yml
+  - type: Conventions
+    url: conventions/archil-conventions.yml
+  - type: Idempotency
+    url: conventions/archil-conventions.yml
+- aid: archil:archil-disks-api
+  name: Archil Disks API
+  description: Create, read, update, and delete disks
+  humanURL: https://docs.archil.com/api-reference/introduction
+  baseURL: https://control.green.us-east-1.aws.prod.archil.com
+  tags:
+  - Disks
+  properties:
+  - type: OpenAPI
+    url: openapi/archil-disks-api-openapi.yml
+  - type: Authentication
+    url: authentication/archil-authentication.yml
+  - type: ErrorCatalog
+    url: errors/archil-problem-types.yml
+  - type: DataModel
+    url: data-model/archil-data-model.yml
+  - type: Conventions
+    url: conventions/archil-conventions.yml
+  - type: Idempotency
+    url: conventions/archil-conventions.yml
+- aid: archil:archil-serverless-execution-api
+  name: Archil Serverless Execution API
+  description: Run commands on a disk without provisioning compute
+  humanURL: https://docs.archil.com/api-reference/introduction
+  baseURL: https://control.green.us-east-1.aws.prod.archil.com
+  tags:
+  - Serverless Execution
+  properties:
+  - type: OpenAPI
+    url: openapi/archil-serverless-execution-api-openapi.yml
+  - type: Authentication
+    url: authentication/archil-authentication.yml
+  - type: ErrorCatalog
+    url: errors/archil-problem-types.yml
+  - type: DataModel
+    url: data-model/archil-data-model.yml
+  - type: Conventions
+    url: conventions/archil-conventions.yml
+  - type: Idempotency
+    url: conventions/archil-conventions.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: TrustCenter
+  url: security/archil-trust-center.yml
 - type: Website
   url: https://archil.com
+- type: DeveloperPortal
+  url: https://docs.archil.com
+- type: Documentation
+  url: https://docs.archil.com
+- type: APIReference
+  url: https://docs.archil.com/api-reference/introduction
+- type: GettingStarted
+  url: https://docs.archil.com/getting-started/quickstart
+- type: SignUp
+  url: https://console.archil.com
+- type: Support
+  url: mailto:support@archil.com
+- type: Blog
+  url: https://archil.com/blog
+- type: Pricing
+  url: https://archil.com/pricing
+- type: TermsOfService
+  url: https://archil.com/terms-of-service
+- type: PrivacyPolicy
+  url: https://archil.com/privacy-policy
+- type: GitHubOrganization
+  url: https://github.com/archil-data
+- type: StatusPage
+  url: https://status.archil.com
+- type: Compliance
+  url: https://docs.archil.com/details/security
+- type: Security
+  url: https://docs.archil.com/details/security
+- type: LLMsTxt
+  url: llms/archil-llms.txt
+- type: Packages
+  url: packages/archil-packages.yml
+- type: SDKs
+  url: packages/archil-packages.yml
+- type: CLI
+  url: cli/archil-cli.yml
+- type: MCPServer
+  url: mcp/archil-mcp.yml
+- type: ChangeLog
+  url: changelog/archil-changelog.yml
+- type: Lifecycle
+  url: lifecycle/archil-lifecycle.yml
+- type: Conformance
+  url: conformance/archil-conformance.yml
+- type: Authentication
+  url: authentication/archil-authentication.yml
+- type: DomainSecurity
+  url: security/archil-domain-security.yml
+- type: VulnerabilityDisclosure
+  url: security/archil-vulnerability-disclosure.yml
+- type: AgentSkill
+  url: skills/_index.yml
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence

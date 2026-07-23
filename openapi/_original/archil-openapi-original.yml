@@ -1,0 +1,1455 @@
+openapi: 3.1.0
+info:
+  title: Archil Control Plane API
+  description: >
+    The Archil Control Plane API provides programmatic access to manage disks,
+
+    mounts, and API keys in the Archil distributed filesystem platform.
+
+
+    API keys authenticate requests to this control plane and are scoped to
+
+    your account. They are distinct from *disk tokens*, which are per-disk
+
+    credentials used by clients when mounting a disk.
+
+
+    ## Authentication
+
+
+    All endpoints require an API key:
+
+
+    ```
+
+    Authorization: {API_KEY}
+
+    ```
+
+
+    Create API keys in the [Archil Console](https://console.archil.com) or via
+    the API.
+
+
+    ## Response Format
+
+
+    All responses use a consistent envelope:
+
+
+    ```json
+
+    {
+      "success": true,
+      "data": { ... }
+    }
+
+    ```
+
+
+    Or on error:
+
+
+    ```json
+
+    {
+      "success": false,
+      "error": "Error message"
+    }
+
+    ```
+  version: 1.0.0
+  contact:
+    email: support@archil.com
+    url: https://archil.com
+servers:
+  - url: https://control.green.us-east-1.aws.prod.archil.com
+    description: AWS US East (N. Virginia) — aws-us-east-1
+  - url: https://control.green.eu-west-1.aws.prod.archil.com
+    description: AWS EU West (Ireland) — aws-eu-west-1
+  - url: https://control.green.us-west-2.aws.prod.archil.com
+    description: AWS US West (Oregon) — aws-us-west-2
+  - url: https://control.blue.us-central1.gcp.prod.archil.com
+    description: GCP US Central (Iowa) — gcp-us-central1
+security:
+  - ApiKeyAuth: []
+tags:
+  - name: Disks
+    description: Create, read, update, and delete disks
+  - name: Serverless Execution
+    description: Run commands on a disk without provisioning compute
+  - name: Disk Users
+    description: Manage authorized users on disks
+  - name: API Tokens
+    description: >-
+      Manage API keys (also called API tokens) used to authenticate Control
+      Plane API requests. Distinct from disk tokens.
+paths:
+  /api/disks:
+    get:
+      operationId: listDisks
+      summary: List all disks
+      description: Returns all disks owned by the authenticated account.
+      tags:
+        - Disks
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - name: name
+          in: query
+          description: Filter disks by exact name match.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of disks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_DiskList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    post:
+      operationId: createDisk
+      summary: Create a new disk
+      description: |
+        Creates a new disk with the specified configuration. A default disk
+        token user is automatically generated and returned in the response,
+        so the disk is immediately mountable. The one-time disk token appears
+        in `authorizedUsers[].token` and cannot be retrieved again. (This
+        disk token is scoped to the new disk and is separate from the API
+        key you used to make this request.)
+
+        To provide your own users instead, pass the deprecated `authMethods`
+        field or call AddDiskUser after creation.
+      tags:
+        - Disks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDiskRequest'
+      responses:
+        '200':
+          description: >-
+            Disk with this name already exists and configuration matches
+            (idempotent)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CreateDisk'
+        '201':
+          description: Disk created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_CreateDisk'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Access denied (e.g., preview region not enabled)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Disk with this name already exists but configuration differs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/disks/{id}:
+    get:
+      operationId: getDisk
+      summary: Get disk details
+      description: Returns detailed information about a specific disk.
+      tags:
+        - Disks
+      parameters:
+        - $ref: '#/components/parameters/DiskId'
+      responses:
+        '200':
+          description: Disk details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_Disk'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    delete:
+      operationId: deleteDisk
+      summary: Delete a disk
+      description: Deletes a disk and all associated resources.
+      tags:
+        - Disks
+      parameters:
+        - $ref: '#/components/parameters/DiskId'
+      responses:
+        '200':
+          description: Disk deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_Empty'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/disks/{id}/users:
+    post:
+      operationId: addDiskUser
+      summary: Add user to disk
+      description: |
+        Adds an authorized user to a disk. Users can authenticate via:
+        - **token**: A shared token with a nickname and 4-character suffix
+        - **awssts**: AWS STS role assumption with an IAM principal ARN
+      tags:
+        - Disk Users
+      parameters:
+        - $ref: '#/components/parameters/DiskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiskUser'
+      responses:
+        '201':
+          description: User added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_AuthorizedUser'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/disks/{id}/users/{userType}:
+    delete:
+      operationId: removeDiskUser
+      summary: Remove user from disk
+      description: Removes an authorized user from a disk.
+      tags:
+        - Disk Users
+      parameters:
+        - $ref: '#/components/parameters/DiskId'
+        - name: userType
+          in: path
+          required: true
+          description: The type of user authentication
+          schema:
+            type: string
+            enum:
+              - token
+              - awssts
+        - name: identifier
+          in: query
+          required: false
+          description: >
+            Identifier of the user to remove, as returned in the creation or
+            list response. For awssts users, this is the IAM ARN.
+          schema:
+            type: string
+        - name: principal
+          in: query
+          required: false
+          deprecated: true
+          description: Use identifier instead.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_Message'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/disks/{id}/exec:
+    post:
+      operationId: execDisk
+      summary: Execute a command on a disk
+      description: |
+        Launches a container with the specified disk mounted, runs the given
+        command to completion, and shuts down the container. Returns immediately
+        with the container info; poll the container endpoint for completion.
+      tags:
+        - Serverless Execution
+      parameters:
+        - $ref: '#/components/parameters/DiskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecDiskRequest'
+      responses:
+        '200':
+          description: Command completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_ExecDisk'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '504':
+          description: Command timed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/disks/{id}/grep:
+    post:
+      operationId: grepDisk
+      summary: Parallel grep over a directory on a disk
+      description: |
+        Searches files under a directory on the disk for lines matching a
+        regular expression. Listing and matching are fanned out across
+        ephemeral exec containers, so the request finishes within the user's
+        time budget regardless of the size of the directory.
+
+        The user controls cost and latency with three knobs:
+
+        - `maxDurationSeconds` is the wall-clock deadline (capped at 30s).
+        - `concurrency` is the maximum number of parallel grep workers.
+          Higher concurrency finishes larger datasets within the deadline,
+          at proportionally more compute.
+        - `maxResults` causes the search to short-circuit after the
+          aggregator has collected this many matches.
+
+        With `recursive: false` only files directly under `directory` are
+        searched. With `recursive: true` subdirectories are walked
+        breadth-first and grep workers are dispatched as soon as each level
+        finishes listing — listing and matching overlap.
+
+        The matches returned when stopping early on `maxResults` are a sample
+        of whichever workers reported first, not the lexicographically first
+        N. The response surfaces `stoppedReason` so callers can distinguish
+        completion from early termination.
+      tags:
+        - Serverless Execution
+      parameters:
+        - $ref: '#/components/parameters/DiskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrepDiskRequest'
+      responses:
+        '200':
+          description: Grep completed (possibly stopped early)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_GrepDisk'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/exec:
+    post:
+      operationId: exec
+      summary: Execute a command with multiple disks mounted
+      description: |
+        Launches a container with the supplied set of disks each mounted at its
+        own relative path under `/mnt/archil`, runs the command to completion,
+        and shuts down the container. Activation is atomic: every disk mounts
+        or none of them do.
+
+        Relative paths must be non-empty, non-absolute, and contain no `.` /
+        `..` segments. Mounting two disks at the same relative path is an
+        error.
+      tags:
+        - Serverless Execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecRequest'
+      responses:
+        '200':
+          description: Command completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_Exec'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '504':
+          description: Command timed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/tokens:
+    get:
+      operationId: listApiTokens
+      summary: List API tokens
+      description: Returns all API tokens for the authenticated account.
+      tags:
+        - API Tokens
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: List of API tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_TokenList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    post:
+      operationId: createApiToken
+      summary: Create API token
+      description: |
+        Creates a new API token for programmatic access. The full token value
+        is only returned once at creation time.
+      tags:
+        - API Tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApiTokenRequest'
+      responses:
+        '201':
+          description: Token created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_TokenCreated'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/tokens/{id}:
+    delete:
+      operationId: deleteApiToken
+      summary: Delete API token
+      description: Revokes and deletes an API token.
+      tags:
+        - API Tokens
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The token ID (hash)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Token deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_Message'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: API key
+  parameters:
+    DiskId:
+      name: id
+      in: path
+      required: true
+      description: Disk ID (format `dsk-{16 hex chars}`)
+      schema:
+        type: string
+        pattern: ^dsk-[0-9a-f]{16}$
+        example: dsk-0123456789abcdef
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of items to return
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Pagination cursor from a previous response
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: Invalid or missing authentication credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
+    ApiResponse_Empty:
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          type: boolean
+          example: true
+    ApiResponse_Message:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+    CreateDiskRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Disk name (alphanumeric, dashes, underscores)
+          minLength: 1
+          maxLength: 100
+          pattern: ^[a-zA-Z0-9_-]+$
+          example: my-data-disk
+        mounts:
+          type: array
+          description: Storage mount to attach. Omit for archil-managed storage.
+          minItems: 0
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/MountConfig'
+        authMethods:
+          type: array
+          deprecated: true
+          description: >
+            Deprecated. Use AddDiskUser after creation instead. When provided,
+            suppresses the default auto-generated token user.
+          items:
+            $ref: '#/components/schemas/DiskUser'
+    MountConfig:
+      oneOf:
+        - $ref: '#/components/schemas/S3Mount'
+        - $ref: '#/components/schemas/GCSMount'
+        - $ref: '#/components/schemas/R2Mount'
+        - $ref: '#/components/schemas/S3CompatibleMount'
+        - $ref: '#/components/schemas/AzureBlobMount'
+      discriminator:
+        propertyName: type
+        mapping:
+          s3: '#/components/schemas/S3Mount'
+          gcs: '#/components/schemas/GCSMount'
+          r2: '#/components/schemas/R2Mount'
+          s3-compatible: '#/components/schemas/S3CompatibleMount'
+          azure-blob: '#/components/schemas/AzureBlobMount'
+    S3Mount:
+      type: object
+      title: S3
+      description: Mount configuration for Amazon S3 buckets
+      required:
+        - type
+        - bucketName
+      properties:
+        type:
+          type: string
+          enum:
+            - s3
+          description: Mount type identifier
+        bucketName:
+          type: string
+          description: S3 bucket name
+          example: my-bucket
+        accessKeyId:
+          type: string
+          description: AWS access key ID (optional for public buckets or IAM role auth)
+        secretAccessKey:
+          type: string
+          description: AWS secret access key
+          format: password
+          writeOnly: true
+        sessionToken:
+          type: string
+          description: Session token for temporary credentials
+          writeOnly: true
+        bucketPrefix:
+          type: string
+          description: Prefix within the bucket
+          example: data/
+    GCSMount:
+      type: object
+      title: Google Cloud Storage
+      description: Mount configuration for Google Cloud Storage buckets
+      required:
+        - type
+        - bucketName
+        - accessKeyId
+        - secretAccessKey
+      properties:
+        type:
+          type: string
+          enum:
+            - gcs
+          description: Mount type identifier
+        bucketName:
+          type: string
+          description: GCS bucket name
+          example: my-gcs-bucket
+        accessKeyId:
+          type: string
+          description: HMAC access key ID
+          writeOnly: true
+        secretAccessKey:
+          type: string
+          description: HMAC secret access key
+          format: password
+          writeOnly: true
+        bucketPrefix:
+          type: string
+          description: Prefix within the bucket (optional)
+          example: data/
+    R2Mount:
+      type: object
+      title: Cloudflare R2
+      description: Mount configuration for Cloudflare R2 buckets
+      required:
+        - type
+        - bucketName
+        - bucketEndpoint
+        - accessKeyId
+        - secretAccessKey
+      properties:
+        type:
+          type: string
+          enum:
+            - r2
+          description: Mount type identifier
+        bucketName:
+          type: string
+          description: R2 bucket name
+          example: my-r2-bucket
+        bucketEndpoint:
+          type: string
+          description: R2 endpoint URL
+          example: https://accountid.r2.cloudflarestorage.com
+        accessKeyId:
+          type: string
+          description: R2 access key ID
+          writeOnly: true
+        secretAccessKey:
+          type: string
+          description: R2 secret access key
+          format: password
+          writeOnly: true
+        bucketPrefix:
+          type: string
+          description: Prefix within the bucket (optional)
+          example: data/
+    S3CompatibleMount:
+      type: object
+      title: S3-Compatible
+      description: >-
+        Mount configuration for S3-compatible storage (MinIO, Backblaze B2,
+        etc.)
+      required:
+        - type
+        - bucketName
+        - bucketEndpoint
+        - accessKeyId
+        - secretAccessKey
+      properties:
+        type:
+          type: string
+          enum:
+            - s3-compatible
+          description: Mount type identifier
+        bucketName:
+          type: string
+          description: Bucket name
+          example: my-bucket
+        bucketEndpoint:
+          type: string
+          description: S3-compatible endpoint URL
+          example: https://s3.us-west-001.backblazeb2.com
+        accessKeyId:
+          type: string
+          description: Access key ID
+          writeOnly: true
+        secretAccessKey:
+          type: string
+          description: Secret access key
+          format: password
+          writeOnly: true
+        bucketPrefix:
+          type: string
+          description: Prefix within the bucket (optional)
+          example: data/
+    AzureBlobMount:
+      type: object
+      title: Azure Blob Storage
+      description: Mount configuration for Azure Blob Storage containers
+      required:
+        - type
+        - containerName
+        - tenantId
+        - clientId
+        - clientSecret
+      properties:
+        type:
+          type: string
+          enum:
+            - azure-blob
+          description: Mount type identifier
+        containerName:
+          type: string
+          description: Azure blob container name
+          example: my-container
+        endpoint:
+          type: string
+          description: Azure blob endpoint URL (optional if storageAccountName provided)
+          example: https://myaccount.blob.core.windows.net
+        storageAccountName:
+          type: string
+          description: Azure storage account name (used to derive endpoint if not provided)
+          example: myaccount
+        tenantId:
+          type: string
+          description: Azure AD tenant ID
+        clientId:
+          type: string
+          description: Azure AD application client ID
+        clientSecret:
+          type: string
+          description: Azure AD application client secret
+          format: password
+          writeOnly: true
+        bucketPrefix:
+          type: string
+          description: Prefix within the container
+          example: data/
+    TokenUser:
+      type: object
+      required:
+        - type
+        - nickname
+      properties:
+        type:
+          type: string
+          enum:
+            - token
+        principal:
+          type: string
+          maxLength: 2048
+          deprecated: true
+          description: >
+            Deprecated. Client-provided token. If omitted, the server generates
+            a cryptographically secure token and returns it in the response.
+        nickname:
+          type: string
+          maxLength: 255
+        tokenSuffix:
+          type: string
+          minLength: 4
+          maxLength: 4
+          deprecated: true
+          description: >
+            Deprecated. Last 4 characters of the token. Required when principal
+            is provided; ignored when the server generates the token.
+    AwsStsUser:
+      type: object
+      required:
+        - type
+        - principal
+      properties:
+        type:
+          type: string
+          enum:
+            - awssts
+        principal:
+          type: string
+          description: IAM principal ARN
+          maxLength: 2048
+    DiskUser:
+      oneOf:
+        - $ref: '#/components/schemas/TokenUser'
+        - $ref: '#/components/schemas/AwsStsUser'
+      discriminator:
+        propertyName: type
+        mapping:
+          token: '#/components/schemas/TokenUser'
+          awssts: '#/components/schemas/AwsStsUser'
+    DiskResponse:
+      type: object
+      required:
+        - id
+        - name
+        - organization
+        - status
+        - provider
+        - region
+        - createdAt
+      properties:
+        id:
+          type: string
+          description: Disk ID
+          example: dsk-0123456789abcdef
+        name:
+          type: string
+          description: Disk name
+        organization:
+          type: string
+          description: Owning organization ID
+        status:
+          type: string
+          description: Disk status
+          enum:
+            - available
+            - creating
+            - deleting
+            - deleted
+            - failed
+        fsHandlerStatus:
+          type: string
+          description: Filesystem handler status
+        provider:
+          type: string
+          description: Cloud provider
+        region:
+          type: string
+          description: Disk region (e.g., aws-us-east-1, gcp-us-central1)
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        lastAccessed:
+          type: string
+          format: date-time
+          description: Last access timestamp
+        dataSize:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Total data size in bytes
+        monthlyUsage:
+          type: string
+          description: Monthly usage amount formatted as a currency string (e.g., "$1.23")
+        mounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/MountResponse'
+        metrics:
+          $ref: '#/components/schemas/DiskMetrics'
+        connectedClients:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectedClient'
+        authorizedUsers:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuthorizedUser'
+    MountResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Mount identifier
+        type:
+          type: string
+          description: Storage backend type
+          enum:
+            - s3
+            - gcs
+            - r2
+            - s3-compatible
+            - azure-blob
+        path:
+          type: string
+          description: Mount path
+        name:
+          type: string
+          description: Bucket/container name
+        accessMode:
+          type: string
+          description: Access mode
+          enum:
+            - rw
+            - ro
+          example: rw
+        config:
+          $ref: '#/components/schemas/MountConfigResponse'
+        connectionStatus:
+          type: string
+          description: Current connection status
+          enum:
+            - connected
+            - disconnected
+        authError:
+          type: string
+          description: Authentication error message (if disconnected)
+        authorizationType:
+          type: string
+          description: How the mount authenticates to the storage backend
+          enum:
+            - iam
+            - accessKeys
+            - oauth
+    MountConfigResponse:
+      type: object
+      description: Mount configuration details (secrets omitted)
+      properties:
+        bucketName:
+          type: string
+          description: Bucket name
+        bucketEndpoint:
+          type: string
+          description: Storage endpoint URL
+        bucketPrefix:
+          type: string
+          description: Prefix within the bucket
+        sessionId:
+          type: string
+          description: Session identifier for IAM-authorized mounts
+    DiskMetrics:
+      type: object
+      properties:
+        dataTransfer:
+          type: string
+          description: Data transfer amount with unit (e.g., "1.5 GB")
+        requests:
+          type: string
+          description: Total request count as a formatted string (e.g., "1,234")
+        avgResponseTime:
+          type: string
+          description: Average response time with unit (e.g., "45ms")
+    ConnectedClient:
+      type: object
+      properties:
+        id:
+          type: string
+        ipAddress:
+          type: string
+        connectedAt:
+          type: string
+          format: date-time
+    AuthorizedUser:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - token
+            - awssts
+        principal:
+          type: string
+          deprecated: true
+          description: >
+            Use identifier instead. Only populated for awssts type (the IAM
+            ARN).
+        nickname:
+          type: string
+        tokenSuffix:
+          type: string
+        token:
+          type: string
+          description: >
+            The generated disk token (used by clients when mounting the disk).
+            Only present in the response when the server generates the token
+            (i.e. principal was not provided). This value is shown exactly once
+            and cannot be retrieved again.
+        identifier:
+          type: string
+          description: >
+            Stable identifier for this user, returned in creation and list
+            responses. Use this value with DELETE
+            /api/disks/{id}/users/{type}?identifier={identifier} to remove the
+            user. For awssts users, this is the IAM ARN.
+        createdAt:
+          type: string
+          format: date-time
+    ApiResponse_DiskList:
+      description: >
+        All API responses use a standard envelope with `success: boolean` and
+        `data` (on success) or `error: string` (on failure). The ApiResponse_*
+        schemas each define the specific `data` shape for their endpoint.
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiskResponse'
+    ApiResponse_Disk:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/DiskResponse'
+    ApiResponse_CreateDisk:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            diskId:
+              type: string
+              example: dsk-0123456789abcdef
+            authorizedUsers:
+              type: array
+              items:
+                $ref: '#/components/schemas/AuthorizedUser'
+    ApiResponse_AuthorizedUser:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/AuthorizedUser'
+    CreateApiTokenRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Token name
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          description: Token description
+          maxLength: 500
+    ApiTokenResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Token hash/ID
+        name:
+          type: string
+        description:
+          type: string
+        tokenSuffix:
+          type: string
+          description: Last 4 characters of the token
+        createdAt:
+          type: string
+          format: date-time
+        lastUsedAt:
+          type: string
+          format: date-time
+    ApiResponse_TokenList:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            tokens:
+              type: array
+              items:
+                $ref: '#/components/schemas/ApiTokenResponse'
+    ApiResponse_TokenCreated:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          allOf:
+            - $ref: '#/components/schemas/ApiTokenResponse'
+            - type: object
+              properties:
+                token:
+                  type: string
+                  description: Full token value (only shown at creation)
+                  example: key-abc123...
+    ExecDiskRequest:
+      type: object
+      required:
+        - command
+      properties:
+        command:
+          type: string
+          description: Shell command to execute inside the container
+          example: ls -la /mnt/archil
+    ExecDiskResult:
+      type: object
+      required:
+        - exitCode
+        - stdout
+        - stderr
+        - timing
+      properties:
+        exitCode:
+          type: integer
+          description: Exit code of the command (0 = success)
+          example: 0
+        stdout:
+          type: string
+          description: Standard output from the command
+        stderr:
+          type: string
+          description: Standard error from the command
+        timing:
+          $ref: '#/components/schemas/ExecTiming'
+    ExecTiming:
+      type: object
+      description: Server-measured timings for an exec request.
+      required:
+        - totalMs
+        - queueMs
+        - executeMs
+      properties:
+        totalMs:
+          type: integer
+          description: >
+            End-to-end wall clock measured on the server, from request arrival
+            to response.
+          example: 2450
+        queueMs:
+          type: integer
+          description: >
+            Time spent queueing, scheduling, booting/claiming a VM, and mounting
+            the filesystem before the command started running.
+          example: 150
+        executeMs:
+          type: integer
+          description: |
+            Time the user's command itself ran, measured by the runtime.
+          example: 2300
+    ApiResponse_ExecDisk:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/ExecDiskResult'
+    ExecRequest:
+      type: object
+      required:
+        - disks
+        - command
+      properties:
+        disks:
+          type: object
+          description: |
+            Map of relative path under `/mnt/archil` to the disk to mount
+            there. At least one entry is required. Relative paths must be
+            non-empty, non-absolute, and contain no `.` or `..` segments.
+
+            Each value is either a plain disk ID string (mounts the disk's
+            root, read-write) or an object that additionally selects a
+            subdirectory of the disk and/or marks the mount as read-only.
+          additionalProperties:
+            oneOf:
+              - type: string
+                description: Disk ID; mounts the disk's root as read-write
+                example: dsk-abc123
+              - $ref: '#/components/schemas/ExecMount'
+          example:
+            data: dsk-abc123
+            logs:
+              disk: dsk-def456
+              subdirectory: app/logs
+              readOnly: true
+        command:
+          type: string
+          description: Shell command to execute inside the container
+          example: ls -la /mnt/archil/data /mnt/archil/logs
+    ExecMount:
+      type: object
+      required:
+        - disk
+      properties:
+        disk:
+          type: string
+          description: Disk ID to mount at this relative path
+          example: dsk-abc123
+        subdirectory:
+          type: string
+          description: |
+            Subdirectory of the disk to expose at the mountpoint. Must be a
+            relative path with no `.` or `..` segments. When omitted, the
+            disk's root is exposed.
+          example: app/logs
+        readOnly:
+          type: boolean
+          default: false
+          description: |
+            When true, the disk is mounted read-only inside the container.
+            Writes against the mount fail with EROFS.
+    ApiResponse_Exec:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/ExecDiskResult'
+    GrepDiskRequest:
+      type: object
+      required:
+        - directory
+        - pattern
+      properties:
+        directory:
+          type: string
+          description: |
+            Directory on the disk to search, relative to the disk root.
+            An empty string or "/" means the disk root.
+          example: data/logs
+        pattern:
+          type: string
+          description: Extended regular expression (passed to `grep -E`)
+          example: ERROR|FATAL
+        recursive:
+          type: boolean
+          description: When true, walks subdirectories breadth-first.
+          default: false
+        maxDurationSeconds:
+          type: integer
+          minimum: 1
+          maximum: 30
+          default: 30
+          description: |
+            Wall-clock deadline for the entire request. Capped at 30
+            seconds because the runtime exec container itself is bounded
+            at ~30s; longer requests would have their workers killed
+            mid-scan.
+        concurrency:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+          description: |
+            Maximum number of parallel grep workers. Higher values finish
+            larger datasets within the deadline but consume proportionally
+            more runtime capacity.
+        maxResults:
+          type: integer
+          minimum: 1
+          maximum: 10000
+          default: 1000
+          description: |
+            Stop scanning once the aggregator has this many matches.
+            Returned matches are a sample of whichever workers reported
+            first, not the lexicographically first N.
+    GrepMatch:
+      type: object
+      required:
+        - file
+        - line
+        - text
+      properties:
+        file:
+          type: string
+          description: Path to the file (relative to the disk root).
+          example: data/logs/2026-05-03.log
+        line:
+          type: integer
+          description: 1-based line number where the match occurred.
+          example: 142
+        text:
+          type: string
+          description: The matching line.
+    GrepStoppedReason:
+      type: string
+      enum:
+        - completed
+        - incomplete
+        - max_results
+        - deadline
+        - list_failed
+      description: |
+        Why the search stopped.
+        - `completed`: every file under the directory was scanned successfully.
+        - `incomplete`: pipeline ran to its natural end but one or more
+          batches errored (invalid regex, unreadable file, runtime issue).
+          Results may be partial or wrong; do not rely on completeness.
+        - `max_results`: hit `maxResults` before scanning everything.
+        - `deadline`: hit `maxDurationSeconds`.
+        - `list_failed`: directory listing failed; partial results
+          may be present.
+    GrepDiskResult:
+      type: object
+      required:
+        - matches
+        - stoppedReason
+        - filesScanned
+        - containersDispatched
+        - computeSecondsUsed
+        - durationMs
+        - listingMs
+        - grepMs
+      properties:
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrepMatch'
+        stoppedReason:
+          $ref: '#/components/schemas/GrepStoppedReason'
+        filesScanned:
+          type: integer
+          description: Files actually fed to a grep container.
+        containersDispatched:
+          type: integer
+          description: Number of grep containers started for this request.
+        computeSecondsUsed:
+          type: number
+          format: double
+          description: |
+            Sum of per-container execution time in seconds, measured by the
+            runtime. Approximates billable container-seconds.
+        durationMs:
+          type: integer
+          description: End-to-end wall clock measured by the server.
+        listingMs:
+          type: integer
+          description: |
+            Wall-clock time spent enumerating files via listObjects, from
+            the request's start to the moment listing fully drained (or
+            was canceled). Listing and matching overlap, so listingMs +
+            grepMs typically exceeds durationMs.
+        grepMs:
+          type: integer
+          description: |
+            Wall-clock time spent matching, from the first grep container
+            being dispatched to the last container reporting results. 0 if
+            no batches ran.
+    ApiResponse_GrepDisk:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/GrepDiskResult'

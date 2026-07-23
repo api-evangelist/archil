@@ -1,0 +1,494 @@
+openapi: 3.1.0
+info:
+  title: Archil Control Plane API Tokens Serverless Execution API
+  description: "The Archil Control Plane API provides programmatic access to manage disks,\nmounts, and API keys in the Archil distributed filesystem platform.\n\nAPI keys authenticate requests to this control plane and are scoped to\nyour account. They are distinct from *disk tokens*, which are per-disk\ncredentials used by clients when mounting a disk.\n\n## Authentication\n\nAll endpoints require an API key:\n\n```\nAuthorization: {API_KEY}\n```\n\nCreate API keys in the [Archil Console](https://console.archil.com) or via the API.\n\n## Response Format\n\nAll responses use a consistent envelope:\n\n```json\n{\n  \"success\": true,\n  \"data\": { ... }\n}\n```\n\nOr on error:\n\n```json\n{\n  \"success\": false,\n  \"error\": \"Error message\"\n}\n```\n"
+  version: 1.0.0
+  contact:
+    email: support@archil.com
+    url: https://archil.com
+servers:
+- url: https://control.green.us-east-1.aws.prod.archil.com
+  description: AWS US East (N. Virginia) — aws-us-east-1
+- url: https://control.green.eu-west-1.aws.prod.archil.com
+  description: AWS EU West (Ireland) — aws-eu-west-1
+- url: https://control.green.us-west-2.aws.prod.archil.com
+  description: AWS US West (Oregon) — aws-us-west-2
+- url: https://control.blue.us-central1.gcp.prod.archil.com
+  description: GCP US Central (Iowa) — gcp-us-central1
+security:
+- ApiKeyAuth: []
+tags:
+- name: Serverless Execution
+  description: Run commands on a disk without provisioning compute
+paths:
+  /api/disks/{id}/exec:
+    post:
+      operationId: execDisk
+      summary: Execute a command on a disk
+      description: 'Launches a container with the specified disk mounted, runs the given
+
+        command to completion, and shuts down the container. Returns immediately
+
+        with the container info; poll the container endpoint for completion.
+
+        '
+      tags:
+      - Serverless Execution
+      parameters:
+      - $ref: '#/components/parameters/DiskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecDiskRequest'
+      responses:
+        '200':
+          description: Command completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_ExecDisk'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '504':
+          description: Command timed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/disks/{id}/grep:
+    post:
+      operationId: grepDisk
+      summary: Parallel grep over a directory on a disk
+      description: "Searches files under a directory on the disk for lines matching a\nregular expression. Listing and matching are fanned out across\nephemeral exec containers, so the request finishes within the user's\ntime budget regardless of the size of the directory.\n\nThe user controls cost and latency with three knobs:\n\n- `maxDurationSeconds` is the wall-clock deadline (capped at 30s).\n- `concurrency` is the maximum number of parallel grep workers.\n  Higher concurrency finishes larger datasets within the deadline,\n  at proportionally more compute.\n- `maxResults` causes the search to short-circuit after the\n  aggregator has collected this many matches.\n\nWith `recursive: false` only files directly under `directory` are\nsearched. With `recursive: true` subdirectories are walked\nbreadth-first and grep workers are dispatched as soon as each level\nfinishes listing — listing and matching overlap.\n\nThe matches returned when stopping early on `maxResults` are a sample\nof whichever workers reported first, not the lexicographically first\nN. The response surfaces `stoppedReason` so callers can distinguish\ncompletion from early termination.\n"
+      tags:
+      - Serverless Execution
+      parameters:
+      - $ref: '#/components/parameters/DiskId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrepDiskRequest'
+      responses:
+        '200':
+          description: Grep completed (possibly stopped early)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_GrepDisk'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/exec:
+    post:
+      operationId: exec
+      summary: Execute a command with multiple disks mounted
+      description: 'Launches a container with the supplied set of disks each mounted at its
+
+        own relative path under `/mnt/archil`, runs the command to completion,
+
+        and shuts down the container. Activation is atomic: every disk mounts
+
+        or none of them do.
+
+
+        Relative paths must be non-empty, non-absolute, and contain no `.` /
+
+        `..` segments. Mounting two disks at the same relative path is an
+
+        error.
+
+        '
+      tags:
+      - Serverless Execution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecRequest'
+      responses:
+        '200':
+          description: Command completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_Exec'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '504':
+          description: Command timed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ExecTiming:
+      type: object
+      description: Server-measured timings for an exec request.
+      required:
+      - totalMs
+      - queueMs
+      - executeMs
+      properties:
+        totalMs:
+          type: integer
+          description: 'End-to-end wall clock measured on the server, from request arrival to response.
+
+            '
+          example: 2450
+        queueMs:
+          type: integer
+          description: 'Time spent queueing, scheduling, booting/claiming a VM, and mounting the filesystem before the command started running.
+
+            '
+          example: 150
+        executeMs:
+          type: integer
+          description: 'Time the user''s command itself ran, measured by the runtime.
+
+            '
+          example: 2300
+    ApiResponse_ExecDisk:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/ExecDiskResult'
+    ExecDiskResult:
+      type: object
+      required:
+      - exitCode
+      - stdout
+      - stderr
+      - timing
+      properties:
+        exitCode:
+          type: integer
+          description: Exit code of the command (0 = success)
+          example: 0
+        stdout:
+          type: string
+          description: Standard output from the command
+        stderr:
+          type: string
+          description: Standard error from the command
+        timing:
+          $ref: '#/components/schemas/ExecTiming'
+    ExecMount:
+      type: object
+      required:
+      - disk
+      properties:
+        disk:
+          type: string
+          description: Disk ID to mount at this relative path
+          example: dsk-abc123
+        subdirectory:
+          type: string
+          description: 'Subdirectory of the disk to expose at the mountpoint. Must be a
+
+            relative path with no `.` or `..` segments. When omitted, the
+
+            disk''s root is exposed.
+
+            '
+          example: app/logs
+        readOnly:
+          type: boolean
+          default: false
+          description: 'When true, the disk is mounted read-only inside the container.
+
+            Writes against the mount fail with EROFS.
+
+            '
+    ApiResponse_Exec:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/ExecDiskResult'
+    GrepStoppedReason:
+      type: string
+      enum:
+      - completed
+      - incomplete
+      - max_results
+      - deadline
+      - list_failed
+      description: "Why the search stopped.\n- `completed`: every file under the directory was scanned successfully.\n- `incomplete`: pipeline ran to its natural end but one or more\n  batches errored (invalid regex, unreadable file, runtime issue).\n  Results may be partial or wrong; do not rely on completeness.\n- `max_results`: hit `maxResults` before scanning everything.\n- `deadline`: hit `maxDurationSeconds`.\n- `list_failed`: directory listing failed; partial results\n  may be present.\n"
+    GrepDiskRequest:
+      type: object
+      required:
+      - directory
+      - pattern
+      properties:
+        directory:
+          type: string
+          description: 'Directory on the disk to search, relative to the disk root.
+
+            An empty string or "/" means the disk root.
+
+            '
+          example: data/logs
+        pattern:
+          type: string
+          description: Extended regular expression (passed to `grep -E`)
+          example: ERROR|FATAL
+        recursive:
+          type: boolean
+          description: When true, walks subdirectories breadth-first.
+          default: false
+        maxDurationSeconds:
+          type: integer
+          minimum: 1
+          maximum: 30
+          default: 30
+          description: 'Wall-clock deadline for the entire request. Capped at 30
+
+            seconds because the runtime exec container itself is bounded
+
+            at ~30s; longer requests would have their workers killed
+
+            mid-scan.
+
+            '
+        concurrency:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+          description: 'Maximum number of parallel grep workers. Higher values finish
+
+            larger datasets within the deadline but consume proportionally
+
+            more runtime capacity.
+
+            '
+        maxResults:
+          type: integer
+          minimum: 1
+          maximum: 10000
+          default: 1000
+          description: 'Stop scanning once the aggregator has this many matches.
+
+            Returned matches are a sample of whichever workers reported
+
+            first, not the lexicographically first N.
+
+            '
+    ErrorResponse:
+      type: object
+      required:
+      - success
+      - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
+    GrepMatch:
+      type: object
+      required:
+      - file
+      - line
+      - text
+      properties:
+        file:
+          type: string
+          description: Path to the file (relative to the disk root).
+          example: data/logs/2026-05-03.log
+        line:
+          type: integer
+          description: 1-based line number where the match occurred.
+          example: 142
+        text:
+          type: string
+          description: The matching line.
+    ExecDiskRequest:
+      type: object
+      required:
+      - command
+      properties:
+        command:
+          type: string
+          description: Shell command to execute inside the container
+          example: ls -la /mnt/archil
+    ApiResponse_GrepDisk:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/GrepDiskResult'
+    ExecRequest:
+      type: object
+      required:
+      - disks
+      - command
+      properties:
+        disks:
+          type: object
+          description: 'Map of relative path under `/mnt/archil` to the disk to mount
+
+            there. At least one entry is required. Relative paths must be
+
+            non-empty, non-absolute, and contain no `.` or `..` segments.
+
+
+            Each value is either a plain disk ID string (mounts the disk''s
+
+            root, read-write) or an object that additionally selects a
+
+            subdirectory of the disk and/or marks the mount as read-only.
+
+            '
+          additionalProperties:
+            oneOf:
+            - type: string
+              description: Disk ID; mounts the disk's root as read-write
+              example: dsk-abc123
+            - $ref: '#/components/schemas/ExecMount'
+          example:
+            data: dsk-abc123
+            logs:
+              disk: dsk-def456
+              subdirectory: app/logs
+              readOnly: true
+        command:
+          type: string
+          description: Shell command to execute inside the container
+          example: ls -la /mnt/archil/data /mnt/archil/logs
+    GrepDiskResult:
+      type: object
+      required:
+      - matches
+      - stoppedReason
+      - filesScanned
+      - containersDispatched
+      - computeSecondsUsed
+      - durationMs
+      - listingMs
+      - grepMs
+      properties:
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/GrepMatch'
+        stoppedReason:
+          $ref: '#/components/schemas/GrepStoppedReason'
+        filesScanned:
+          type: integer
+          description: Files actually fed to a grep container.
+        containersDispatched:
+          type: integer
+          description: Number of grep containers started for this request.
+        computeSecondsUsed:
+          type: number
+          format: double
+          description: 'Sum of per-container execution time in seconds, measured by the
+
+            runtime. Approximates billable container-seconds.
+
+            '
+        durationMs:
+          type: integer
+          description: End-to-end wall clock measured by the server.
+        listingMs:
+          type: integer
+          description: 'Wall-clock time spent enumerating files via listObjects, from
+
+            the request''s start to the moment listing fully drained (or
+
+            was canceled). Listing and matching overlap, so listingMs +
+
+            grepMs typically exceeds durationMs.
+
+            '
+        grepMs:
+          type: integer
+          description: 'Wall-clock time spent matching, from the first grep container
+
+            being dispatched to the last container reporting results. 0 if
+
+            no batches ran.
+
+            '
+  responses:
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Invalid or missing authentication credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  parameters:
+    DiskId:
+      name: id
+      in: path
+      required: true
+      description: Disk ID (format `dsk-{16 hex chars}`)
+      schema:
+        type: string
+        pattern: ^dsk-[0-9a-f]{16}$
+        example: dsk-0123456789abcdef
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: API key

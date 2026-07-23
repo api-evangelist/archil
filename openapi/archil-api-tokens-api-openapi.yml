@@ -1,0 +1,243 @@
+openapi: 3.1.0
+info:
+  title: Archil Control Plane API Tokens API
+  description: "The Archil Control Plane API provides programmatic access to manage disks,\nmounts, and API keys in the Archil distributed filesystem platform.\n\nAPI keys authenticate requests to this control plane and are scoped to\nyour account. They are distinct from *disk tokens*, which are per-disk\ncredentials used by clients when mounting a disk.\n\n## Authentication\n\nAll endpoints require an API key:\n\n```\nAuthorization: {API_KEY}\n```\n\nCreate API keys in the [Archil Console](https://console.archil.com) or via the API.\n\n## Response Format\n\nAll responses use a consistent envelope:\n\n```json\n{\n  \"success\": true,\n  \"data\": { ... }\n}\n```\n\nOr on error:\n\n```json\n{\n  \"success\": false,\n  \"error\": \"Error message\"\n}\n```\n"
+  version: 1.0.0
+  contact:
+    email: support@archil.com
+    url: https://archil.com
+servers:
+- url: https://control.green.us-east-1.aws.prod.archil.com
+  description: AWS US East (N. Virginia) — aws-us-east-1
+- url: https://control.green.eu-west-1.aws.prod.archil.com
+  description: AWS EU West (Ireland) — aws-eu-west-1
+- url: https://control.green.us-west-2.aws.prod.archil.com
+  description: AWS US West (Oregon) — aws-us-west-2
+- url: https://control.blue.us-central1.gcp.prod.archil.com
+  description: GCP US Central (Iowa) — gcp-us-central1
+security:
+- ApiKeyAuth: []
+tags:
+- name: API Tokens
+  description: Manage API keys (also called API tokens) used to authenticate Control Plane API requests. Distinct from disk tokens.
+paths:
+  /api/tokens:
+    get:
+      operationId: listApiTokens
+      summary: List API tokens
+      description: Returns all API tokens for the authenticated account.
+      tags:
+      - API Tokens
+      parameters:
+      - $ref: '#/components/parameters/Limit'
+      - $ref: '#/components/parameters/Cursor'
+      responses:
+        '200':
+          description: List of API tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_TokenList'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+    post:
+      operationId: createApiToken
+      summary: Create API token
+      description: 'Creates a new API token for programmatic access. The full token value
+
+        is only returned once at creation time.
+
+        '
+      tags:
+      - API Tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApiTokenRequest'
+      responses:
+        '201':
+          description: Token created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_TokenCreated'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /api/tokens/{id}:
+    delete:
+      operationId: deleteApiToken
+      summary: Delete API token
+      description: Revokes and deletes an API token.
+      tags:
+      - API Tokens
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The token ID (hash)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Token deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse_Message'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  schemas:
+    ApiTokenResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Token hash/ID
+        name:
+          type: string
+        description:
+          type: string
+        tokenSuffix:
+          type: string
+          description: Last 4 characters of the token
+        createdAt:
+          type: string
+          format: date-time
+        lastUsedAt:
+          type: string
+          format: date-time
+    ApiResponse_Message:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+    ErrorResponse:
+      type: object
+      required:
+      - success
+      - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
+    CreateApiTokenRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: Token name
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          description: Token description
+          maxLength: 500
+    ApiResponse_TokenList:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            tokens:
+              type: array
+              items:
+                $ref: '#/components/schemas/ApiTokenResponse'
+    ApiResponse_TokenCreated:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          allOf:
+          - $ref: '#/components/schemas/ApiTokenResponse'
+          - type: object
+            properties:
+              token:
+                type: string
+                description: Full token value (only shown at creation)
+                example: key-abc123...
+  responses:
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Invalid or missing authentication credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Pagination cursor from a previous response
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of items to return
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: API key
