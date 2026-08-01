@@ -1,0 +1,722 @@
+{
+  "info": {
+    "_postman_id": "37714c4c-3e48-465b-a5d6-339ec0257676",
+    "name": "Archil Control Plane API Tokens Disk Users API",
+    "description": "The Archil Control Plane API provides programmatic access to manage disks,\nmounts, and API keys in the Archil distributed filesystem platform.\n\nAPI keys authenticate requests to this control plane and are scoped to\nyour account. They are distinct from *disk tokens*, which are per-disk\ncredentials used by clients when mounting a disk.\n\n## Authentication\n\nAll endpoints require an API key:\n\n```\nAuthorization: {API_KEY}\n```\n\nCreate API keys in the [Archil Console](https://console.archil.com) or via the API.\n\n## Response Format\n\nAll responses use a consistent envelope:\n\n```json\n{\n  \"success\": true,\n  \"data\": { ... }\n}\n```\n\nOr on error:\n\n```json\n{\n  \"success\": false,\n  \"error\": \"Error message\"\n}\n```\n\n\nContact Support:\n Email: support@archil.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:04:44.000Z",
+    "updatedAt": "2026-07-28T01:04:44.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-37714c4c-3e48-465b-a5d6-339ec0257676"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "disks",
+          "item": [
+            {
+              "name": "{id}",
+              "item": [
+                {
+                  "name": "users",
+                  "item": [
+                    {
+                      "name": "{userType}",
+                      "item": [
+                        {
+                          "name": "Remove user from disk",
+                          "id": "5bd811e0-4f1d-45e2-9c8e-62fad275cf42",
+                          "protocolProfileBehavior": {
+                            "disableBodyPruning": true
+                          },
+                          "request": {
+                            "method": "DELETE",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/users/:userType?identifier=<string>&principal=<string>",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "users",
+                                ":userType"
+                              ],
+                              "query": [
+                                {
+                                  "description": "Identifier of the user to remove, as returned in the creation or list response. For awssts users, this is the IAM ARN.\n",
+                                  "key": "identifier",
+                                  "value": "<string>"
+                                },
+                                {
+                                  "description": "Use identifier instead.",
+                                  "key": "principal",
+                                  "value": "<string>"
+                                }
+                              ],
+                              "variable": [
+                                {
+                                  "id": "07205483-2980-44bf-9049-cbaab7814f0d",
+                                  "key": "id",
+                                  "value": "dsk-60030f8f67c0d36c",
+                                  "description": "(Required) Disk ID (format `dsk-{16 hex chars}`)"
+                                },
+                                {
+                                  "id": "42e5f3db-e4f1-4920-9a9c-647f8e1d8bfe",
+                                  "key": "userType",
+                                  "value": "token",
+                                  "description": "(Required) The type of user authentication"
+                                }
+                              ]
+                            },
+                            "description": "Removes an authorized user from a disk."
+                          },
+                          "response": [
+                            {
+                              "id": "dba07f7e-a05b-4a19-ae96-d0aac99955f5",
+                              "name": "User removed successfully",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: apikey",
+                                    "key": "Authorization",
+                                    "value": "<API Key>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/disks/:id/users/:userType?identifier=<string>&principal=<string>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "disks",
+                                    ":id",
+                                    "users",
+                                    ":userType"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Identifier of the user to remove, as returned in the creation or list response. For awssts users, this is the IAM ARN.\n",
+                                      "key": "identifier",
+                                      "value": "<string>"
+                                    },
+                                    {
+                                      "description": "Use identifier instead.",
+                                      "key": "principal",
+                                      "value": "<string>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "id"
+                                    },
+                                    {
+                                      "key": "userType"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "OK",
+                              "code": 200,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"message\": \"<string>\"\n  }\n}",
+                              "createdAt": "2026-07-28T01:04:44.000Z",
+                              "updatedAt": "2026-07-28T01:04:44.000Z",
+                              "uid": "35240-dba07f7e-a05b-4a19-ae96-d0aac99955f5"
+                            },
+                            {
+                              "id": "765b521b-cd27-4d9e-ac7b-9298ce1e4f3f",
+                              "name": "Validation error",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: apikey",
+                                    "key": "Authorization",
+                                    "value": "<API Key>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/disks/:id/users/:userType?identifier=<string>&principal=<string>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "disks",
+                                    ":id",
+                                    "users",
+                                    ":userType"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Identifier of the user to remove, as returned in the creation or list response. For awssts users, this is the IAM ARN.\n",
+                                      "key": "identifier",
+                                      "value": "<string>"
+                                    },
+                                    {
+                                      "description": "Use identifier instead.",
+                                      "key": "principal",
+                                      "value": "<string>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "id"
+                                    },
+                                    {
+                                      "key": "userType"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Bad Request",
+                              "code": 400,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                              "createdAt": "2026-07-28T01:04:44.000Z",
+                              "updatedAt": "2026-07-28T01:04:44.000Z",
+                              "uid": "35240-765b521b-cd27-4d9e-ac7b-9298ce1e4f3f"
+                            },
+                            {
+                              "id": "7579e037-8216-4d95-93d4-e1ebd9f93810",
+                              "name": "Invalid or missing authentication credentials",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: apikey",
+                                    "key": "Authorization",
+                                    "value": "<API Key>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/disks/:id/users/:userType?identifier=<string>&principal=<string>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "disks",
+                                    ":id",
+                                    "users",
+                                    ":userType"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Identifier of the user to remove, as returned in the creation or list response. For awssts users, this is the IAM ARN.\n",
+                                      "key": "identifier",
+                                      "value": "<string>"
+                                    },
+                                    {
+                                      "description": "Use identifier instead.",
+                                      "key": "principal",
+                                      "value": "<string>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "id"
+                                    },
+                                    {
+                                      "key": "userType"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Unauthorized",
+                              "code": 401,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                              "createdAt": "2026-07-28T01:04:44.000Z",
+                              "updatedAt": "2026-07-28T01:04:44.000Z",
+                              "uid": "35240-7579e037-8216-4d95-93d4-e1ebd9f93810"
+                            },
+                            {
+                              "id": "6bc8bdda-cf59-4e6a-87af-bd064eb5a288",
+                              "name": "Internal server error",
+                              "originalRequest": {
+                                "method": "DELETE",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  },
+                                  {
+                                    "description": "Added as a part of security scheme: apikey",
+                                    "key": "Authorization",
+                                    "value": "<API Key>"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/api/disks/:id/users/:userType?identifier=<string>&principal=<string>",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "api",
+                                    "disks",
+                                    ":id",
+                                    "users",
+                                    ":userType"
+                                  ],
+                                  "query": [
+                                    {
+                                      "description": "Identifier of the user to remove, as returned in the creation or list response. For awssts users, this is the IAM ARN.\n",
+                                      "key": "identifier",
+                                      "value": "<string>"
+                                    },
+                                    {
+                                      "description": "Use identifier instead.",
+                                      "key": "principal",
+                                      "value": "<string>"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "id"
+                                    },
+                                    {
+                                      "key": "userType"
+                                    }
+                                  ]
+                                }
+                              },
+                              "status": "Internal Server Error",
+                              "code": 500,
+                              "_postman_previewlanguage": "json",
+                              "header": [
+                                {
+                                  "key": "Content-Type",
+                                  "value": "application/json"
+                                }
+                              ],
+                              "cookie": [],
+                              "responseTime": null,
+                              "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                              "createdAt": "2026-07-28T01:04:44.000Z",
+                              "updatedAt": "2026-07-28T01:04:44.000Z",
+                              "uid": "35240-6bc8bdda-cf59-4e6a-87af-bd064eb5a288"
+                            }
+                          ],
+                          "createdAt": "2026-07-28T01:04:44.000Z",
+                          "updatedAt": "2026-07-28T01:04:44.000Z",
+                          "uid": "35240-5bd811e0-4f1d-45e2-9c8e-62fad275cf42"
+                        }
+                      ],
+                      "id": "44538611-0ec7-461b-b93e-20b8c5c88ca5",
+                      "createdAt": "2026-07-28T01:04:44.000Z",
+                      "updatedAt": "2026-07-28T01:04:44.000Z",
+                      "uid": "35240-44538611-0ec7-461b-b93e-20b8c5c88ca5"
+                    },
+                    {
+                      "name": "Add user to disk",
+                      "id": "8c4d2b33-7051-40d0-b4cb-1d9382a966b0",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"type\": \"token\",\n  \"nickname\": \"<string>\",\n  \"principal\": \"<string>\",\n  \"tokenSuffix\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id/users",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id",
+                            "users"
+                          ],
+                          "variable": [
+                            {
+                              "id": "14f85a76-2d3d-4c5d-afeb-328c7a8addd4",
+                              "key": "id",
+                              "value": "dsk-60030f8f67c0d36c",
+                              "description": "(Required) Disk ID (format `dsk-{16 hex chars}`)"
+                            }
+                          ]
+                        },
+                        "description": "Adds an authorized user to a disk. Users can authenticate via:\n- **token**: A shared token with a nickname and 4-character suffix\n- **awssts**: AWS STS role assumption with an IAM principal ARN\n"
+                      },
+                      "response": [
+                        {
+                          "id": "9310e73c-5962-424a-bc04-6a7b502cf2c8",
+                          "name": "User added successfully",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"token\",\n  \"nickname\": \"<string>\",\n  \"principal\": \"<string>\",\n  \"tokenSuffix\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/users",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "users"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Created",
+                          "code": 201,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"type\": \"awssts\",\n    \"principal\": \"<string>\",\n    \"nickname\": \"<string>\",\n    \"tokenSuffix\": \"<string>\",\n    \"token\": \"<string>\",\n    \"identifier\": \"<string>\",\n    \"createdAt\": \"<dateTime>\"\n  }\n}",
+                          "createdAt": "2026-07-28T01:04:44.000Z",
+                          "updatedAt": "2026-07-28T01:04:44.000Z",
+                          "uid": "35240-9310e73c-5962-424a-bc04-6a7b502cf2c8"
+                        },
+                        {
+                          "id": "2264c223-0612-467e-ae50-9749eab2e28c",
+                          "name": "Validation error",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"token\",\n  \"nickname\": \"<string>\",\n  \"principal\": \"<string>\",\n  \"tokenSuffix\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/users",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "users"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:44.000Z",
+                          "updatedAt": "2026-07-28T01:04:44.000Z",
+                          "uid": "35240-2264c223-0612-467e-ae50-9749eab2e28c"
+                        },
+                        {
+                          "id": "48248ff8-0d31-4171-8a2d-1472de2938c4",
+                          "name": "Invalid or missing authentication credentials",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"token\",\n  \"nickname\": \"<string>\",\n  \"principal\": \"<string>\",\n  \"tokenSuffix\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/users",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "users"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:44.000Z",
+                          "updatedAt": "2026-07-28T01:04:44.000Z",
+                          "uid": "35240-48248ff8-0d31-4171-8a2d-1472de2938c4"
+                        },
+                        {
+                          "id": "552fc047-ca3a-45d9-9366-2fbc1bdb5e85",
+                          "name": "Internal server error",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"type\": \"token\",\n  \"nickname\": \"<string>\",\n  \"principal\": \"<string>\",\n  \"tokenSuffix\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/users",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "users"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Internal Server Error",
+                          "code": 500,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:44.000Z",
+                          "updatedAt": "2026-07-28T01:04:44.000Z",
+                          "uid": "35240-552fc047-ca3a-45d9-9366-2fbc1bdb5e85"
+                        }
+                      ],
+                      "createdAt": "2026-07-28T01:04:44.000Z",
+                      "updatedAt": "2026-07-28T01:04:44.000Z",
+                      "uid": "35240-8c4d2b33-7051-40d0-b4cb-1d9382a966b0"
+                    }
+                  ],
+                  "id": "ac87ca57-81ca-4ad9-82b8-cf5028915d1b",
+                  "createdAt": "2026-07-28T01:04:44.000Z",
+                  "updatedAt": "2026-07-28T01:04:44.000Z",
+                  "uid": "35240-ac87ca57-81ca-4ad9-82b8-cf5028915d1b"
+                }
+              ],
+              "id": "562564d9-ba50-4d95-91b8-f8cb9c95f0db",
+              "createdAt": "2026-07-28T01:04:44.000Z",
+              "updatedAt": "2026-07-28T01:04:44.000Z",
+              "uid": "35240-562564d9-ba50-4d95-91b8-f8cb9c95f0db"
+            }
+          ],
+          "id": "ebb14b04-d338-4530-8e06-bdd89f092d03",
+          "createdAt": "2026-07-28T01:04:44.000Z",
+          "updatedAt": "2026-07-28T01:04:44.000Z",
+          "uid": "35240-ebb14b04-d338-4530-8e06-bdd89f092d03"
+        }
+      ],
+      "id": "0bc82b43-3ee9-4b9f-8366-d9ab5f6e6c5f",
+      "createdAt": "2026-07-28T01:04:44.000Z",
+      "updatedAt": "2026-07-28T01:04:44.000Z",
+      "uid": "35240-0bc82b43-3ee9-4b9f-8366-d9ab5f6e6c5f"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "Authorization",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://control.green.us-east-1.aws.prod.archil.com"
+    }
+  ]
+}

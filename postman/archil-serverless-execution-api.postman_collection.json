@@ -1,0 +1,1298 @@
+{
+  "info": {
+    "_postman_id": "1c54d9ea-84d3-4e89-8df1-16bb9702190f",
+    "name": "Archil Control Plane API Tokens Serverless Execution API",
+    "description": "The Archil Control Plane API provides programmatic access to manage disks,\nmounts, and API keys in the Archil distributed filesystem platform.\n\nAPI keys authenticate requests to this control plane and are scoped to\nyour account. They are distinct from *disk tokens*, which are per-disk\ncredentials used by clients when mounting a disk.\n\n## Authentication\n\nAll endpoints require an API key:\n\n```\nAuthorization: {API_KEY}\n```\n\nCreate API keys in the [Archil Console](https://console.archil.com) or via the API.\n\n## Response Format\n\nAll responses use a consistent envelope:\n\n```json\n{\n  \"success\": true,\n  \"data\": { ... }\n}\n```\n\nOr on error:\n\n```json\n{\n  \"success\": false,\n  \"error\": \"Error message\"\n}\n```\n\n\nContact Support:\n Email: support@archil.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:04:46.000Z",
+    "updatedAt": "2026-07-28T01:04:46.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-1c54d9ea-84d3-4e89-8df1-16bb9702190f"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "disks",
+          "item": [
+            {
+              "name": "{id}",
+              "item": [
+                {
+                  "name": "exec",
+                  "item": [
+                    {
+                      "name": "Execute a command on a disk",
+                      "id": "a7434eaa-1acc-42ee-a4ca-ef321b12892d",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"command\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id/exec",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id",
+                            "exec"
+                          ],
+                          "variable": [
+                            {
+                              "id": "dd00d3ad-d1e3-4454-8651-f6ce3acdef93",
+                              "key": "id",
+                              "value": "dsk-909d5175f46933c2",
+                              "description": "(Required) Disk ID (format `dsk-{16 hex chars}`)"
+                            }
+                          ]
+                        },
+                        "description": "Launches a container with the specified disk mounted, runs the given\ncommand to completion, and shuts down the container. Returns immediately\nwith the container info; poll the container endpoint for completion.\n"
+                      },
+                      "response": [
+                        {
+                          "id": "cc2035b2-9b95-470a-abc0-57df6cbdfee7",
+                          "name": "Command completed",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"command\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/exec",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "exec"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"exitCode\": \"<integer>\",\n    \"stdout\": \"<string>\",\n    \"stderr\": \"<string>\",\n    \"timing\": {\n      \"totalMs\": \"<integer>\",\n      \"queueMs\": \"<integer>\",\n      \"executeMs\": \"<integer>\"\n    }\n  }\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-cc2035b2-9b95-470a-abc0-57df6cbdfee7"
+                        },
+                        {
+                          "id": "f6639669-c828-4ead-866e-e200c0d58d18",
+                          "name": "Validation error",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"command\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/exec",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "exec"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-f6639669-c828-4ead-866e-e200c0d58d18"
+                        },
+                        {
+                          "id": "29c8eb1f-8e00-4360-8a77-e9cfd5f3deb0",
+                          "name": "Invalid or missing authentication credentials",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"command\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/exec",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "exec"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-29c8eb1f-8e00-4360-8a77-e9cfd5f3deb0"
+                        },
+                        {
+                          "id": "a82d86f3-3acc-4406-8fb3-48912e0d46d0",
+                          "name": "Resource not found",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"command\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/exec",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "exec"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-a82d86f3-3acc-4406-8fb3-48912e0d46d0"
+                        },
+                        {
+                          "id": "a33568c8-ee62-49a1-a003-8245407391f2",
+                          "name": "Internal server error",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"command\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/exec",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "exec"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Internal Server Error",
+                          "code": 500,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-a33568c8-ee62-49a1-a003-8245407391f2"
+                        },
+                        {
+                          "id": "df0b2cb4-ea34-42fd-ba60-1c74de02ab77",
+                          "name": "Command timed out",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"command\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/exec",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "exec"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Gateway Timeout",
+                          "code": 504,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-df0b2cb4-ea34-42fd-ba60-1c74de02ab77"
+                        }
+                      ],
+                      "createdAt": "2026-07-28T01:04:46.000Z",
+                      "updatedAt": "2026-07-28T01:04:46.000Z",
+                      "uid": "35240-a7434eaa-1acc-42ee-a4ca-ef321b12892d"
+                    }
+                  ],
+                  "id": "3ddc18ef-c6ec-4ea4-af7d-7ccc25437ed2",
+                  "createdAt": "2026-07-28T01:04:46.000Z",
+                  "updatedAt": "2026-07-28T01:04:46.000Z",
+                  "uid": "35240-3ddc18ef-c6ec-4ea4-af7d-7ccc25437ed2"
+                },
+                {
+                  "name": "grep",
+                  "item": [
+                    {
+                      "name": "Parallel grep over a directory on a disk",
+                      "id": "7489fbf8-bb30-4232-8e10-dff4089f1f29",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"directory\": \"<string>\",\n  \"pattern\": \"<string>\",\n  \"recursive\": false,\n  \"maxDurationSeconds\": 30,\n  \"concurrency\": 50,\n  \"maxResults\": 1000\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id/grep",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id",
+                            "grep"
+                          ],
+                          "variable": [
+                            {
+                              "id": "f7267d8a-8a34-4bb8-a45c-d07fce1ee827",
+                              "key": "id",
+                              "value": "dsk-909d5175f46933c2",
+                              "description": "(Required) Disk ID (format `dsk-{16 hex chars}`)"
+                            }
+                          ]
+                        },
+                        "description": "Searches files under a directory on the disk for lines matching a\nregular expression. Listing and matching are fanned out across\nephemeral exec containers, so the request finishes within the user's\ntime budget regardless of the size of the directory.\n\nThe user controls cost and latency with three knobs:\n\n- `maxDurationSeconds` is the wall-clock deadline (capped at 30s).\n- `concurrency` is the maximum number of parallel grep workers.\n  Higher concurrency finishes larger datasets within the deadline,\n  at proportionally more compute.\n- `maxResults` causes the search to short-circuit after the\n  aggregator has collected this many matches.\n\nWith `recursive: false` only files directly under `directory` are\nsearched. With `recursive: true` subdirectories are walked\nbreadth-first and grep workers are dispatched as soon as each level\nfinishes listing \u2014 listing and matching overlap.\n\nThe matches returned when stopping early on `maxResults` are a sample\nof whichever workers reported first, not the lexicographically first\nN. The response surfaces `stoppedReason` so callers can distinguish\ncompletion from early termination.\n"
+                      },
+                      "response": [
+                        {
+                          "id": "a5eaa47b-3f70-4263-8819-d9fa4f07c284",
+                          "name": "Grep completed (possibly stopped early)",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"directory\": \"<string>\",\n  \"pattern\": \"<string>\",\n  \"recursive\": false,\n  \"maxDurationSeconds\": 30,\n  \"concurrency\": 50,\n  \"maxResults\": 1000\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/grep",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "grep"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"matches\": [\n      {\n        \"file\": \"<string>\",\n        \"line\": \"<integer>\",\n        \"text\": \"<string>\"\n      },\n      {\n        \"file\": \"<string>\",\n        \"line\": \"<integer>\",\n        \"text\": \"<string>\"\n      }\n    ],\n    \"stoppedReason\": \"incomplete\",\n    \"filesScanned\": \"<integer>\",\n    \"containersDispatched\": \"<integer>\",\n    \"computeSecondsUsed\": \"<double>\",\n    \"durationMs\": \"<integer>\",\n    \"listingMs\": \"<integer>\",\n    \"grepMs\": \"<integer>\"\n  }\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-a5eaa47b-3f70-4263-8819-d9fa4f07c284"
+                        },
+                        {
+                          "id": "b9ca6cae-1f63-4d8a-ab40-0204a4a0d05c",
+                          "name": "Validation error",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"directory\": \"<string>\",\n  \"pattern\": \"<string>\",\n  \"recursive\": false,\n  \"maxDurationSeconds\": 30,\n  \"concurrency\": 50,\n  \"maxResults\": 1000\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/grep",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "grep"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-b9ca6cae-1f63-4d8a-ab40-0204a4a0d05c"
+                        },
+                        {
+                          "id": "01f67b7d-9013-4933-8fcd-bed1e4d3c142",
+                          "name": "Invalid or missing authentication credentials",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"directory\": \"<string>\",\n  \"pattern\": \"<string>\",\n  \"recursive\": false,\n  \"maxDurationSeconds\": 30,\n  \"concurrency\": 50,\n  \"maxResults\": 1000\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/grep",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "grep"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-01f67b7d-9013-4933-8fcd-bed1e4d3c142"
+                        },
+                        {
+                          "id": "3b6d7c65-6e55-481c-b2ab-9094a48299f5",
+                          "name": "Resource not found",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"directory\": \"<string>\",\n  \"pattern\": \"<string>\",\n  \"recursive\": false,\n  \"maxDurationSeconds\": 30,\n  \"concurrency\": 50,\n  \"maxResults\": 1000\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/grep",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "grep"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-3b6d7c65-6e55-481c-b2ab-9094a48299f5"
+                        },
+                        {
+                          "id": "be739fa2-6dfd-444c-8540-6588a7847e4c",
+                          "name": "Internal server error",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: apikey",
+                                "key": "Authorization",
+                                "value": "<API Key>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"directory\": \"<string>\",\n  \"pattern\": \"<string>\",\n  \"recursive\": false,\n  \"maxDurationSeconds\": 30,\n  \"concurrency\": 50,\n  \"maxResults\": 1000\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/api/disks/:id/grep",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "api",
+                                "disks",
+                                ":id",
+                                "grep"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "id"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Internal Server Error",
+                          "code": 500,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                          "createdAt": "2026-07-28T01:04:46.000Z",
+                          "updatedAt": "2026-07-28T01:04:46.000Z",
+                          "uid": "35240-be739fa2-6dfd-444c-8540-6588a7847e4c"
+                        }
+                      ],
+                      "createdAt": "2026-07-28T01:04:46.000Z",
+                      "updatedAt": "2026-07-28T01:04:46.000Z",
+                      "uid": "35240-7489fbf8-bb30-4232-8e10-dff4089f1f29"
+                    }
+                  ],
+                  "id": "2b9e4745-5e0f-488b-bfc3-fa5b52ed1c5c",
+                  "createdAt": "2026-07-28T01:04:46.000Z",
+                  "updatedAt": "2026-07-28T01:04:46.000Z",
+                  "uid": "35240-2b9e4745-5e0f-488b-bfc3-fa5b52ed1c5c"
+                }
+              ],
+              "id": "45eb1934-3514-46a5-909c-e280f4c3b604",
+              "createdAt": "2026-07-28T01:04:46.000Z",
+              "updatedAt": "2026-07-28T01:04:46.000Z",
+              "uid": "35240-45eb1934-3514-46a5-909c-e280f4c3b604"
+            }
+          ],
+          "id": "f45abfc9-fa6e-40fe-902c-12c14df6e183",
+          "createdAt": "2026-07-28T01:04:46.000Z",
+          "updatedAt": "2026-07-28T01:04:46.000Z",
+          "uid": "35240-f45abfc9-fa6e-40fe-902c-12c14df6e183"
+        },
+        {
+          "name": "exec",
+          "item": [
+            {
+              "name": "Execute a command with multiple disks mounted",
+              "id": "eaad8d68-6c65-418f-8c0f-83797f7bcb5f",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"disks\": {\n    \"tempor4a\": \"<string>\"\n  },\n  \"command\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/exec",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "exec"
+                  ]
+                },
+                "description": "Launches a container with the supplied set of disks each mounted at its\nown relative path under `/mnt/archil`, runs the command to completion,\nand shuts down the container. Activation is atomic: every disk mounts\nor none of them do.\n\nRelative paths must be non-empty, non-absolute, and contain no `.` /\n`..` segments. Mounting two disks at the same relative path is an\nerror.\n"
+              },
+              "response": [
+                {
+                  "id": "5eee4d6a-8762-4d86-9029-dba296412088",
+                  "name": "Command completed",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"disks\": {\n    \"tempor4a\": \"<string>\"\n  },\n  \"command\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/exec",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "exec"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"exitCode\": \"<integer>\",\n    \"stdout\": \"<string>\",\n    \"stderr\": \"<string>\",\n    \"timing\": {\n      \"totalMs\": \"<integer>\",\n      \"queueMs\": \"<integer>\",\n      \"executeMs\": \"<integer>\"\n    }\n  }\n}",
+                  "createdAt": "2026-07-28T01:04:46.000Z",
+                  "updatedAt": "2026-07-28T01:04:46.000Z",
+                  "uid": "35240-5eee4d6a-8762-4d86-9029-dba296412088"
+                },
+                {
+                  "id": "f7e62370-5570-44d3-9501-312ed8aa840a",
+                  "name": "Validation error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"disks\": {\n    \"tempor4a\": \"<string>\"\n  },\n  \"command\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/exec",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "exec"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:46.000Z",
+                  "updatedAt": "2026-07-28T01:04:46.000Z",
+                  "uid": "35240-f7e62370-5570-44d3-9501-312ed8aa840a"
+                },
+                {
+                  "id": "d63b36e2-aaea-4387-8ad6-5f3e3c1c74c0",
+                  "name": "Invalid or missing authentication credentials",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"disks\": {\n    \"tempor4a\": \"<string>\"\n  },\n  \"command\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/exec",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "exec"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:46.000Z",
+                  "updatedAt": "2026-07-28T01:04:46.000Z",
+                  "uid": "35240-d63b36e2-aaea-4387-8ad6-5f3e3c1c74c0"
+                },
+                {
+                  "id": "6a7d04af-8999-4231-a728-baf663c9db70",
+                  "name": "Resource not found",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"disks\": {\n    \"tempor4a\": \"<string>\"\n  },\n  \"command\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/exec",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "exec"
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:46.000Z",
+                  "updatedAt": "2026-07-28T01:04:46.000Z",
+                  "uid": "35240-6a7d04af-8999-4231-a728-baf663c9db70"
+                },
+                {
+                  "id": "f95aac3c-0ee5-402f-9f4d-9c808076ad72",
+                  "name": "Internal server error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"disks\": {\n    \"tempor4a\": \"<string>\"\n  },\n  \"command\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/exec",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "exec"
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:46.000Z",
+                  "updatedAt": "2026-07-28T01:04:46.000Z",
+                  "uid": "35240-f95aac3c-0ee5-402f-9f4d-9c808076ad72"
+                },
+                {
+                  "id": "a9fab6bf-ae64-46e0-ad24-2e50af5a43bb",
+                  "name": "Command timed out",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"disks\": {\n    \"tempor4a\": \"<string>\"\n  },\n  \"command\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/exec",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "exec"
+                      ]
+                    }
+                  },
+                  "status": "Gateway Timeout",
+                  "code": 504,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:46.000Z",
+                  "updatedAt": "2026-07-28T01:04:46.000Z",
+                  "uid": "35240-a9fab6bf-ae64-46e0-ad24-2e50af5a43bb"
+                }
+              ],
+              "createdAt": "2026-07-28T01:04:46.000Z",
+              "updatedAt": "2026-07-28T01:04:46.000Z",
+              "uid": "35240-eaad8d68-6c65-418f-8c0f-83797f7bcb5f"
+            }
+          ],
+          "id": "13d174fc-7427-4b90-b527-f5d77d5b96b5",
+          "createdAt": "2026-07-28T01:04:46.000Z",
+          "updatedAt": "2026-07-28T01:04:46.000Z",
+          "uid": "35240-13d174fc-7427-4b90-b527-f5d77d5b96b5"
+        }
+      ],
+      "id": "cc0361c9-0990-49fe-84ac-85871fa14b5d",
+      "createdAt": "2026-07-28T01:04:46.000Z",
+      "updatedAt": "2026-07-28T01:04:46.000Z",
+      "uid": "35240-cc0361c9-0990-49fe-84ac-85871fa14b5d"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "Authorization",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://control.green.us-east-1.aws.prod.archil.com"
+    }
+  ]
+}

@@ -1,0 +1,787 @@
+{
+  "info": {
+    "_postman_id": "2d02853b-a1dd-48db-9b33-388df3d5d60a",
+    "name": "Archil Control Plane API Tokens API",
+    "description": "The Archil Control Plane API provides programmatic access to manage disks,\nmounts, and API keys in the Archil distributed filesystem platform.\n\nAPI keys authenticate requests to this control plane and are scoped to\nyour account. They are distinct from *disk tokens*, which are per-disk\ncredentials used by clients when mounting a disk.\n\n## Authentication\n\nAll endpoints require an API key:\n\n```\nAuthorization: {API_KEY}\n```\n\nCreate API keys in the [Archil Console](https://console.archil.com) or via the API.\n\n## Response Format\n\nAll responses use a consistent envelope:\n\n```json\n{\n  \"success\": true,\n  \"data\": { ... }\n}\n```\n\nOr on error:\n\n```json\n{\n  \"success\": false,\n  \"error\": \"Error message\"\n}\n```\n\n\nContact Support:\n Email: support@archil.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:04:35.000Z",
+    "updatedAt": "2026-07-28T01:04:35.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-2d02853b-a1dd-48db-9b33-388df3d5d60a"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "tokens",
+          "item": [
+            {
+              "name": "{id}",
+              "item": [
+                {
+                  "name": "Delete API token",
+                  "id": "3ae58002-6888-4a85-b798-35c085e0e5c9",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/tokens/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "tokens",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "id": "937eee3e-82a2-4092-9ae4-1b83e0f322f5",
+                          "key": "id",
+                          "value": "<string>",
+                          "description": "(Required) The token ID (hash)"
+                        }
+                      ]
+                    },
+                    "description": "Revokes and deletes an API token."
+                  },
+                  "response": [
+                    {
+                      "id": "35753341-d748-4993-bcd5-be54a24d4c91",
+                      "name": "Token deleted successfully",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/tokens/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "tokens",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"message\": \"<string>\"\n  }\n}",
+                      "createdAt": "2026-07-28T01:04:36.000Z",
+                      "updatedAt": "2026-07-28T01:04:36.000Z",
+                      "uid": "35240-35753341-d748-4993-bcd5-be54a24d4c91"
+                    },
+                    {
+                      "id": "8f59cdb2-10d9-463b-b754-9b8db2978593",
+                      "name": "Invalid or missing authentication credentials",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/tokens/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "tokens",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:36.000Z",
+                      "updatedAt": "2026-07-28T01:04:36.000Z",
+                      "uid": "35240-8f59cdb2-10d9-463b-b754-9b8db2978593"
+                    },
+                    {
+                      "id": "a8f95376-2bb7-40c1-a1ce-c58ba761babe",
+                      "name": "Resource not found",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/tokens/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "tokens",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:36.000Z",
+                      "updatedAt": "2026-07-28T01:04:36.000Z",
+                      "uid": "35240-a8f95376-2bb7-40c1-a1ce-c58ba761babe"
+                    },
+                    {
+                      "id": "87829165-ac86-40b4-9eac-04f163f953d9",
+                      "name": "Internal server error",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/tokens/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "tokens",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:36.000Z",
+                      "updatedAt": "2026-07-28T01:04:36.000Z",
+                      "uid": "35240-87829165-ac86-40b4-9eac-04f163f953d9"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:04:36.000Z",
+                  "updatedAt": "2026-07-28T01:04:36.000Z",
+                  "uid": "35240-3ae58002-6888-4a85-b798-35c085e0e5c9"
+                }
+              ],
+              "id": "0839e918-0de7-4b69-8b81-df6b0da92a91",
+              "createdAt": "2026-07-28T01:04:36.000Z",
+              "updatedAt": "2026-07-28T01:04:36.000Z",
+              "uid": "35240-0839e918-0de7-4b69-8b81-df6b0da92a91"
+            },
+            {
+              "name": "List API tokens",
+              "id": "90f5ddc2-1abf-4e40-b991-84b5c8a1adbf",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/tokens?limit=50&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tokens"
+                  ],
+                  "query": [
+                    {
+                      "description": "Maximum number of items to return",
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "description": "Pagination cursor from a previous response",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                },
+                "description": "Returns all API tokens for the authenticated account."
+              },
+              "response": [
+                {
+                  "id": "b0f6aae1-7f1d-4316-9528-58e6edbaecb2",
+                  "name": "List of API tokens",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/tokens?limit=50&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "tokens"
+                      ],
+                      "query": [
+                        {
+                          "description": "Maximum number of items to return",
+                          "key": "limit",
+                          "value": "50"
+                        },
+                        {
+                          "description": "Pagination cursor from a previous response",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"tokens\": [\n      {\n        \"id\": \"<string>\",\n        \"name\": \"<string>\",\n        \"description\": \"<string>\",\n        \"tokenSuffix\": \"<string>\",\n        \"createdAt\": \"<dateTime>\",\n        \"lastUsedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<string>\",\n        \"name\": \"<string>\",\n        \"description\": \"<string>\",\n        \"tokenSuffix\": \"<string>\",\n        \"createdAt\": \"<dateTime>\",\n        \"lastUsedAt\": \"<dateTime>\"\n      }\n    ]\n  }\n}",
+                  "createdAt": "2026-07-28T01:04:36.000Z",
+                  "updatedAt": "2026-07-28T01:04:36.000Z",
+                  "uid": "35240-b0f6aae1-7f1d-4316-9528-58e6edbaecb2"
+                },
+                {
+                  "id": "daf66bfd-ee5b-43ba-b632-25d81b87200c",
+                  "name": "Invalid or missing authentication credentials",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/tokens?limit=50&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "tokens"
+                      ],
+                      "query": [
+                        {
+                          "description": "Maximum number of items to return",
+                          "key": "limit",
+                          "value": "50"
+                        },
+                        {
+                          "description": "Pagination cursor from a previous response",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:36.000Z",
+                  "updatedAt": "2026-07-28T01:04:36.000Z",
+                  "uid": "35240-daf66bfd-ee5b-43ba-b632-25d81b87200c"
+                },
+                {
+                  "id": "1ea25139-e72f-4735-bcd9-cfa5b04fee57",
+                  "name": "Internal server error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/tokens?limit=50&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "tokens"
+                      ],
+                      "query": [
+                        {
+                          "description": "Maximum number of items to return",
+                          "key": "limit",
+                          "value": "50"
+                        },
+                        {
+                          "description": "Pagination cursor from a previous response",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:36.000Z",
+                  "updatedAt": "2026-07-28T01:04:36.000Z",
+                  "uid": "35240-1ea25139-e72f-4735-bcd9-cfa5b04fee57"
+                }
+              ],
+              "createdAt": "2026-07-28T01:04:36.000Z",
+              "updatedAt": "2026-07-28T01:04:36.000Z",
+              "uid": "35240-90f5ddc2-1abf-4e40-b991-84b5c8a1adbf"
+            },
+            {
+              "name": "Create API token",
+              "id": "01c95f7d-4b06-4576-95f6-e50a56197436",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/tokens",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "tokens"
+                  ]
+                },
+                "description": "Creates a new API token for programmatic access. The full token value\nis only returned once at creation time.\n"
+              },
+              "response": [
+                {
+                  "id": "bb2aa455-9046-406f-a618-b34e8543e115",
+                  "name": "Token created successfully",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/tokens",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "tokens"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"description\": \"<string>\",\n    \"tokenSuffix\": \"<string>\",\n    \"createdAt\": \"<dateTime>\",\n    \"lastUsedAt\": \"<dateTime>\",\n    \"token\": \"<string>\"\n  }\n}",
+                  "createdAt": "2026-07-28T01:04:36.000Z",
+                  "updatedAt": "2026-07-28T01:04:36.000Z",
+                  "uid": "35240-bb2aa455-9046-406f-a618-b34e8543e115"
+                },
+                {
+                  "id": "8c8ab428-403b-4dfd-a6df-96d09f255804",
+                  "name": "Validation error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/tokens",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "tokens"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:36.000Z",
+                  "updatedAt": "2026-07-28T01:04:36.000Z",
+                  "uid": "35240-8c8ab428-403b-4dfd-a6df-96d09f255804"
+                },
+                {
+                  "id": "a73b45b1-547a-47b5-8870-2c0f12571220",
+                  "name": "Invalid or missing authentication credentials",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/tokens",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "tokens"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:36.000Z",
+                  "updatedAt": "2026-07-28T01:04:36.000Z",
+                  "uid": "35240-a73b45b1-547a-47b5-8870-2c0f12571220"
+                },
+                {
+                  "id": "9028a9d6-b3b7-4798-b6c1-343f6d8017cf",
+                  "name": "Internal server error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"<string>\",\n  \"description\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/tokens",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "tokens"
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:36.000Z",
+                  "updatedAt": "2026-07-28T01:04:36.000Z",
+                  "uid": "35240-9028a9d6-b3b7-4798-b6c1-343f6d8017cf"
+                }
+              ],
+              "createdAt": "2026-07-28T01:04:36.000Z",
+              "updatedAt": "2026-07-28T01:04:36.000Z",
+              "uid": "35240-01c95f7d-4b06-4576-95f6-e50a56197436"
+            }
+          ],
+          "id": "69328809-4d62-4ce5-8195-6a51247f9a00",
+          "createdAt": "2026-07-28T01:04:36.000Z",
+          "updatedAt": "2026-07-28T01:04:36.000Z",
+          "uid": "35240-69328809-4d62-4ce5-8195-6a51247f9a00"
+        }
+      ],
+      "id": "a6a7dafa-4490-4dd4-9f37-b096b082e489",
+      "createdAt": "2026-07-28T01:04:36.000Z",
+      "updatedAt": "2026-07-28T01:04:36.000Z",
+      "uid": "35240-a6a7dafa-4490-4dd4-9f37-b096b082e489"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "Authorization",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://control.green.us-east-1.aws.prod.archil.com"
+    }
+  ]
+}

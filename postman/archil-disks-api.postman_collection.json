@@ -1,0 +1,1313 @@
+{
+  "info": {
+    "_postman_id": "b950bafd-5658-47ad-a1cb-8d3b9b5fb7af",
+    "name": "Archil Control Plane API Tokens Disks API",
+    "description": "The Archil Control Plane API provides programmatic access to manage disks,\nmounts, and API keys in the Archil distributed filesystem platform.\n\nAPI keys authenticate requests to this control plane and are scoped to\nyour account. They are distinct from *disk tokens*, which are per-disk\ncredentials used by clients when mounting a disk.\n\n## Authentication\n\nAll endpoints require an API key:\n\n```\nAuthorization: {API_KEY}\n```\n\nCreate API keys in the [Archil Console](https://console.archil.com) or via the API.\n\n## Response Format\n\nAll responses use a consistent envelope:\n\n```json\n{\n  \"success\": true,\n  \"data\": { ... }\n}\n```\n\nOr on error:\n\n```json\n{\n  \"success\": false,\n  \"error\": \"Error message\"\n}\n```\n\n\nContact Support:\n Email: support@archil.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T01:04:45.000Z",
+    "updatedAt": "2026-07-28T01:04:45.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-b950bafd-5658-47ad-a1cb-8d3b9b5fb7af"
+  },
+  "item": [
+    {
+      "name": "api",
+      "item": [
+        {
+          "name": "disks",
+          "item": [
+            {
+              "name": "{id}",
+              "item": [
+                {
+                  "name": "Get disk details",
+                  "id": "3b8caed2-f6af-4905-826e-88fc37ad9446",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "id": "a22d76fb-e61c-4b83-907d-898d1bb97656",
+                          "key": "id",
+                          "value": "dsk-eced59319007ef1f",
+                          "description": "(Required) Disk ID (format `dsk-{16 hex chars}`)"
+                        }
+                      ]
+                    },
+                    "description": "Returns detailed information about a specific disk."
+                  },
+                  "response": [
+                    {
+                      "id": "01b9d5f9-c5e4-4843-a933-55928ee06b75",
+                      "name": "Disk details",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"id\": \"<string>\",\n    \"name\": \"<string>\",\n    \"organization\": \"<string>\",\n    \"status\": \"deleting\",\n    \"provider\": \"<string>\",\n    \"region\": \"<string>\",\n    \"createdAt\": \"<dateTime>\",\n    \"fsHandlerStatus\": \"<string>\",\n    \"lastAccessed\": \"<dateTime>\",\n    \"dataSize\": \"<long>\",\n    \"monthlyUsage\": \"<string>\",\n    \"mounts\": [\n      {\n        \"id\": \"<string>\",\n        \"type\": \"azure-blob\",\n        \"path\": \"<string>\",\n        \"name\": \"<string>\",\n        \"accessMode\": \"ro\",\n        \"config\": {\n          \"bucketName\": \"<string>\",\n          \"bucketEndpoint\": \"<string>\",\n          \"bucketPrefix\": \"<string>\",\n          \"sessionId\": \"<string>\"\n        },\n        \"connectionStatus\": \"disconnected\",\n        \"authError\": \"<string>\",\n        \"authorizationType\": \"iam\"\n      },\n      {\n        \"id\": \"<string>\",\n        \"type\": \"s3\",\n        \"path\": \"<string>\",\n        \"name\": \"<string>\",\n        \"accessMode\": \"ro\",\n        \"config\": {\n          \"bucketName\": \"<string>\",\n          \"bucketEndpoint\": \"<string>\",\n          \"bucketPrefix\": \"<string>\",\n          \"sessionId\": \"<string>\"\n        },\n        \"connectionStatus\": \"disconnected\",\n        \"authError\": \"<string>\",\n        \"authorizationType\": \"iam\"\n      }\n    ],\n    \"metrics\": {\n      \"dataTransfer\": \"<string>\",\n      \"requests\": \"<string>\",\n      \"avgResponseTime\": \"<string>\"\n    },\n    \"connectedClients\": [\n      {\n        \"id\": \"<string>\",\n        \"ipAddress\": \"<string>\",\n        \"connectedAt\": \"<dateTime>\"\n      },\n      {\n        \"id\": \"<string>\",\n        \"ipAddress\": \"<string>\",\n        \"connectedAt\": \"<dateTime>\"\n      }\n    ],\n    \"authorizedUsers\": [\n      {\n        \"type\": \"token\",\n        \"principal\": \"<string>\",\n        \"nickname\": \"<string>\",\n        \"tokenSuffix\": \"<string>\",\n        \"token\": \"<string>\",\n        \"identifier\": \"<string>\",\n        \"createdAt\": \"<dateTime>\"\n      },\n      {\n        \"type\": \"token\",\n        \"principal\": \"<string>\",\n        \"nickname\": \"<string>\",\n        \"tokenSuffix\": \"<string>\",\n        \"token\": \"<string>\",\n        \"identifier\": \"<string>\",\n        \"createdAt\": \"<dateTime>\"\n      }\n    ]\n  }\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-01b9d5f9-c5e4-4843-a933-55928ee06b75"
+                    },
+                    {
+                      "id": "ac19cfed-c307-445e-baea-1a9021f2aef9",
+                      "name": "Validation error",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-ac19cfed-c307-445e-baea-1a9021f2aef9"
+                    },
+                    {
+                      "id": "5df63bf1-656b-493a-be91-60abdc178988",
+                      "name": "Invalid or missing authentication credentials",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-5df63bf1-656b-493a-be91-60abdc178988"
+                    },
+                    {
+                      "id": "6f944a82-f187-4653-9337-ba8294f75f41",
+                      "name": "Resource not found",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-6f944a82-f187-4653-9337-ba8294f75f41"
+                    },
+                    {
+                      "id": "36674ddb-7a5c-4e38-bf52-4f4de1fb3a75",
+                      "name": "Internal server error",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-36674ddb-7a5c-4e38-bf52-4f4de1fb3a75"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-3b8caed2-f6af-4905-826e-88fc37ad9446"
+                },
+                {
+                  "name": "Delete a disk",
+                  "id": "2d29426e-41f8-4547-ae75-46ff3a2b0f50",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "id": "9c628892-8411-47c9-885f-15a937adcf92",
+                          "key": "id",
+                          "value": "dsk-eced59319007ef1f",
+                          "description": "(Required) Disk ID (format `dsk-{16 hex chars}`)"
+                        }
+                      ]
+                    },
+                    "description": "Deletes a disk and all associated resources."
+                  },
+                  "response": [
+                    {
+                      "id": "36051d0b-cca1-4e17-88cc-ea861085c864",
+                      "name": "Disk deleted successfully",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\"\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-36051d0b-cca1-4e17-88cc-ea861085c864"
+                    },
+                    {
+                      "id": "21afee74-8755-4e26-98e6-1f16cd2ec495",
+                      "name": "Validation error",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-21afee74-8755-4e26-98e6-1f16cd2ec495"
+                    },
+                    {
+                      "id": "2f9dc457-e6b0-451d-9be3-c864273128de",
+                      "name": "Invalid or missing authentication credentials",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-2f9dc457-e6b0-451d-9be3-c864273128de"
+                    },
+                    {
+                      "id": "d6130624-f896-453f-a6f8-4aaebcb15857",
+                      "name": "Resource not found",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-d6130624-f896-453f-a6f8-4aaebcb15857"
+                    },
+                    {
+                      "id": "eb597716-3390-4f9b-b861-d0b4a58bb62a",
+                      "name": "Internal server error",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: apikey",
+                            "key": "Authorization",
+                            "value": "<API Key>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/api/disks/:id",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "api",
+                            "disks",
+                            ":id"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T01:04:45.000Z",
+                      "updatedAt": "2026-07-28T01:04:45.000Z",
+                      "uid": "35240-eb597716-3390-4f9b-b861-d0b4a58bb62a"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-2d29426e-41f8-4547-ae75-46ff3a2b0f50"
+                }
+              ],
+              "id": "679006d0-5eae-4a50-bc69-88cb49336880",
+              "createdAt": "2026-07-28T01:04:45.000Z",
+              "updatedAt": "2026-07-28T01:04:45.000Z",
+              "uid": "35240-679006d0-5eae-4a50-bc69-88cb49336880"
+            },
+            {
+              "name": "List all disks",
+              "id": "03e59fb7-cf1b-427d-8f05-3c7366a69952",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/disks?limit=50&cursor=<string>&name=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "disks"
+                  ],
+                  "query": [
+                    {
+                      "description": "Maximum number of items to return",
+                      "key": "limit",
+                      "value": "50"
+                    },
+                    {
+                      "description": "Pagination cursor from a previous response",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter disks by exact name match.",
+                      "key": "name",
+                      "value": "<string>"
+                    }
+                  ]
+                },
+                "description": "Returns all disks owned by the authenticated account."
+              },
+              "response": [
+                {
+                  "id": "ea05c89f-94fb-40a1-8772-0a39c091cc1e",
+                  "name": "List of disks",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks?limit=50&cursor=<string>&name=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ],
+                      "query": [
+                        {
+                          "description": "Maximum number of items to return",
+                          "key": "limit",
+                          "value": "50"
+                        },
+                        {
+                          "description": "Pagination cursor from a previous response",
+                          "key": "cursor",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter disks by exact name match.",
+                          "key": "name",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"organization\": \"<string>\",\n      \"status\": \"deleting\",\n      \"provider\": \"<string>\",\n      \"region\": \"<string>\",\n      \"createdAt\": \"<dateTime>\",\n      \"fsHandlerStatus\": \"<string>\",\n      \"lastAccessed\": \"<dateTime>\",\n      \"dataSize\": \"<long>\",\n      \"monthlyUsage\": \"<string>\",\n      \"mounts\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"azure-blob\",\n          \"path\": \"<string>\",\n          \"name\": \"<string>\",\n          \"accessMode\": \"ro\",\n          \"config\": {\n            \"bucketName\": \"<string>\",\n            \"bucketEndpoint\": \"<string>\",\n            \"bucketPrefix\": \"<string>\",\n            \"sessionId\": \"<string>\"\n          },\n          \"connectionStatus\": \"connected\",\n          \"authError\": \"<string>\",\n          \"authorizationType\": \"oauth\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"azure-blob\",\n          \"path\": \"<string>\",\n          \"name\": \"<string>\",\n          \"accessMode\": \"rw\",\n          \"config\": {\n            \"bucketName\": \"<string>\",\n            \"bucketEndpoint\": \"<string>\",\n            \"bucketPrefix\": \"<string>\",\n            \"sessionId\": \"<string>\"\n          },\n          \"connectionStatus\": \"disconnected\",\n          \"authError\": \"<string>\",\n          \"authorizationType\": \"iam\"\n        }\n      ],\n      \"metrics\": {\n        \"dataTransfer\": \"<string>\",\n        \"requests\": \"<string>\",\n        \"avgResponseTime\": \"<string>\"\n      },\n      \"connectedClients\": [\n        {\n          \"id\": \"<string>\",\n          \"ipAddress\": \"<string>\",\n          \"connectedAt\": \"<dateTime>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"ipAddress\": \"<string>\",\n          \"connectedAt\": \"<dateTime>\"\n        }\n      ],\n      \"authorizedUsers\": [\n        {\n          \"type\": \"token\",\n          \"principal\": \"<string>\",\n          \"nickname\": \"<string>\",\n          \"tokenSuffix\": \"<string>\",\n          \"token\": \"<string>\",\n          \"identifier\": \"<string>\",\n          \"createdAt\": \"<dateTime>\"\n        },\n        {\n          \"type\": \"token\",\n          \"principal\": \"<string>\",\n          \"nickname\": \"<string>\",\n          \"tokenSuffix\": \"<string>\",\n          \"token\": \"<string>\",\n          \"identifier\": \"<string>\",\n          \"createdAt\": \"<dateTime>\"\n        }\n      ]\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"organization\": \"<string>\",\n      \"status\": \"available\",\n      \"provider\": \"<string>\",\n      \"region\": \"<string>\",\n      \"createdAt\": \"<dateTime>\",\n      \"fsHandlerStatus\": \"<string>\",\n      \"lastAccessed\": \"<dateTime>\",\n      \"dataSize\": \"<long>\",\n      \"monthlyUsage\": \"<string>\",\n      \"mounts\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"s3-compatible\",\n          \"path\": \"<string>\",\n          \"name\": \"<string>\",\n          \"accessMode\": \"rw\",\n          \"config\": {\n            \"bucketName\": \"<string>\",\n            \"bucketEndpoint\": \"<string>\",\n            \"bucketPrefix\": \"<string>\",\n            \"sessionId\": \"<string>\"\n          },\n          \"connectionStatus\": \"disconnected\",\n          \"authError\": \"<string>\",\n          \"authorizationType\": \"oauth\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"s3\",\n          \"path\": \"<string>\",\n          \"name\": \"<string>\",\n          \"accessMode\": \"ro\",\n          \"config\": {\n            \"bucketName\": \"<string>\",\n            \"bucketEndpoint\": \"<string>\",\n            \"bucketPrefix\": \"<string>\",\n            \"sessionId\": \"<string>\"\n          },\n          \"connectionStatus\": \"disconnected\",\n          \"authError\": \"<string>\",\n          \"authorizationType\": \"accessKeys\"\n        }\n      ],\n      \"metrics\": {\n        \"dataTransfer\": \"<string>\",\n        \"requests\": \"<string>\",\n        \"avgResponseTime\": \"<string>\"\n      },\n      \"connectedClients\": [\n        {\n          \"id\": \"<string>\",\n          \"ipAddress\": \"<string>\",\n          \"connectedAt\": \"<dateTime>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"ipAddress\": \"<string>\",\n          \"connectedAt\": \"<dateTime>\"\n        }\n      ],\n      \"authorizedUsers\": [\n        {\n          \"type\": \"token\",\n          \"principal\": \"<string>\",\n          \"nickname\": \"<string>\",\n          \"tokenSuffix\": \"<string>\",\n          \"token\": \"<string>\",\n          \"identifier\": \"<string>\",\n          \"createdAt\": \"<dateTime>\"\n        },\n        {\n          \"type\": \"token\",\n          \"principal\": \"<string>\",\n          \"nickname\": \"<string>\",\n          \"tokenSuffix\": \"<string>\",\n          \"token\": \"<string>\",\n          \"identifier\": \"<string>\",\n          \"createdAt\": \"<dateTime>\"\n        }\n      ]\n    }\n  ]\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-ea05c89f-94fb-40a1-8772-0a39c091cc1e"
+                },
+                {
+                  "id": "818649c0-9256-46a7-b050-ec291233aab5",
+                  "name": "Invalid or missing authentication credentials",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks?limit=50&cursor=<string>&name=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ],
+                      "query": [
+                        {
+                          "description": "Maximum number of items to return",
+                          "key": "limit",
+                          "value": "50"
+                        },
+                        {
+                          "description": "Pagination cursor from a previous response",
+                          "key": "cursor",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter disks by exact name match.",
+                          "key": "name",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-818649c0-9256-46a7-b050-ec291233aab5"
+                },
+                {
+                  "id": "a64a1535-f67c-490a-acaf-ebe978f31267",
+                  "name": "Internal server error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks?limit=50&cursor=<string>&name=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ],
+                      "query": [
+                        {
+                          "description": "Maximum number of items to return",
+                          "key": "limit",
+                          "value": "50"
+                        },
+                        {
+                          "description": "Pagination cursor from a previous response",
+                          "key": "cursor",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter disks by exact name match.",
+                          "key": "name",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-a64a1535-f67c-490a-acaf-ebe978f31267"
+                }
+              ],
+              "createdAt": "2026-07-28T01:04:45.000Z",
+              "updatedAt": "2026-07-28T01:04:45.000Z",
+              "uid": "35240-03e59fb7-cf1b-427d-8f05-3c7366a69952"
+            },
+            {
+              "name": "Create a new disk",
+              "id": "1f2298f9-1795-452b-837e-57eb8c4ba5bf",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"y8yNsl3HVz\",\n  \"mounts\": [\n    {\n      \"type\": \"s3\",\n      \"bucketName\": \"<string>\",\n      \"accessKeyId\": \"<string>\",\n      \"secretAccessKey\": \"<string>\",\n      \"sessionToken\": \"<string>\",\n      \"bucketPrefix\": \"<string>\"\n    }\n  ],\n  \"authMethods\": [\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    },\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/disks",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "disks"
+                  ]
+                },
+                "description": "Creates a new disk with the specified configuration. A default disk\ntoken user is automatically generated and returned in the response,\nso the disk is immediately mountable. The one-time disk token appears\nin `authorizedUsers[].token` and cannot be retrieved again. (This\ndisk token is scoped to the new disk and is separate from the API\nkey you used to make this request.)\n\nTo provide your own users instead, pass the deprecated `authMethods`\nfield or call AddDiskUser after creation.\n"
+              },
+              "response": [
+                {
+                  "id": "c9fac370-5b1f-4bfb-978b-77de6bd97593",
+                  "name": "Disk with this name already exists and configuration matches (idempotent)",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"y8yNsl3HVz\",\n  \"mounts\": [\n    {\n      \"type\": \"s3\",\n      \"bucketName\": \"<string>\",\n      \"accessKeyId\": \"<string>\",\n      \"secretAccessKey\": \"<string>\",\n      \"sessionToken\": \"<string>\",\n      \"bucketPrefix\": \"<string>\"\n    }\n  ],\n  \"authMethods\": [\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    },\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    }\n  ]\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"diskId\": \"<string>\",\n    \"authorizedUsers\": [\n      {\n        \"type\": \"token\",\n        \"principal\": \"<string>\",\n        \"nickname\": \"<string>\",\n        \"tokenSuffix\": \"<string>\",\n        \"token\": \"<string>\",\n        \"identifier\": \"<string>\",\n        \"createdAt\": \"<dateTime>\"\n      },\n      {\n        \"type\": \"awssts\",\n        \"principal\": \"<string>\",\n        \"nickname\": \"<string>\",\n        \"tokenSuffix\": \"<string>\",\n        \"token\": \"<string>\",\n        \"identifier\": \"<string>\",\n        \"createdAt\": \"<dateTime>\"\n      }\n    ]\n  }\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-c9fac370-5b1f-4bfb-978b-77de6bd97593"
+                },
+                {
+                  "id": "b28ad83e-392c-4efc-a922-c5750de21eeb",
+                  "name": "Disk created successfully",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"y8yNsl3HVz\",\n  \"mounts\": [\n    {\n      \"type\": \"s3\",\n      \"bucketName\": \"<string>\",\n      \"accessKeyId\": \"<string>\",\n      \"secretAccessKey\": \"<string>\",\n      \"sessionToken\": \"<string>\",\n      \"bucketPrefix\": \"<string>\"\n    }\n  ],\n  \"authMethods\": [\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    },\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    }\n  ]\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"data\": {\n    \"diskId\": \"<string>\",\n    \"authorizedUsers\": [\n      {\n        \"type\": \"token\",\n        \"principal\": \"<string>\",\n        \"nickname\": \"<string>\",\n        \"tokenSuffix\": \"<string>\",\n        \"token\": \"<string>\",\n        \"identifier\": \"<string>\",\n        \"createdAt\": \"<dateTime>\"\n      },\n      {\n        \"type\": \"awssts\",\n        \"principal\": \"<string>\",\n        \"nickname\": \"<string>\",\n        \"tokenSuffix\": \"<string>\",\n        \"token\": \"<string>\",\n        \"identifier\": \"<string>\",\n        \"createdAt\": \"<dateTime>\"\n      }\n    ]\n  }\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-b28ad83e-392c-4efc-a922-c5750de21eeb"
+                },
+                {
+                  "id": "bdac0abd-b093-4599-99bd-722309e488b0",
+                  "name": "Validation error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"y8yNsl3HVz\",\n  \"mounts\": [\n    {\n      \"type\": \"s3\",\n      \"bucketName\": \"<string>\",\n      \"accessKeyId\": \"<string>\",\n      \"secretAccessKey\": \"<string>\",\n      \"sessionToken\": \"<string>\",\n      \"bucketPrefix\": \"<string>\"\n    }\n  ],\n  \"authMethods\": [\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    },\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    }\n  ]\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-bdac0abd-b093-4599-99bd-722309e488b0"
+                },
+                {
+                  "id": "e6d12e09-7fee-4d38-ac7a-6eaac65ef2b1",
+                  "name": "Invalid or missing authentication credentials",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"y8yNsl3HVz\",\n  \"mounts\": [\n    {\n      \"type\": \"s3\",\n      \"bucketName\": \"<string>\",\n      \"accessKeyId\": \"<string>\",\n      \"secretAccessKey\": \"<string>\",\n      \"sessionToken\": \"<string>\",\n      \"bucketPrefix\": \"<string>\"\n    }\n  ],\n  \"authMethods\": [\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    },\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    }\n  ]\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-e6d12e09-7fee-4d38-ac7a-6eaac65ef2b1"
+                },
+                {
+                  "id": "e0fc6b12-c583-4314-87be-11484cb3558c",
+                  "name": "Access denied (e.g., preview region not enabled)",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"y8yNsl3HVz\",\n  \"mounts\": [\n    {\n      \"type\": \"s3\",\n      \"bucketName\": \"<string>\",\n      \"accessKeyId\": \"<string>\",\n      \"secretAccessKey\": \"<string>\",\n      \"sessionToken\": \"<string>\",\n      \"bucketPrefix\": \"<string>\"\n    }\n  ],\n  \"authMethods\": [\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    },\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    }\n  ]\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-e0fc6b12-c583-4314-87be-11484cb3558c"
+                },
+                {
+                  "id": "01787ca7-3b0e-409a-aa51-c9e2faf1086b",
+                  "name": "Disk with this name already exists but configuration differs",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"y8yNsl3HVz\",\n  \"mounts\": [\n    {\n      \"type\": \"s3\",\n      \"bucketName\": \"<string>\",\n      \"accessKeyId\": \"<string>\",\n      \"secretAccessKey\": \"<string>\",\n      \"sessionToken\": \"<string>\",\n      \"bucketPrefix\": \"<string>\"\n    }\n  ],\n  \"authMethods\": [\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    },\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    }\n  ]\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ]
+                    }
+                  },
+                  "status": "Conflict",
+                  "code": 409,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-01787ca7-3b0e-409a-aa51-c9e2faf1086b"
+                },
+                {
+                  "id": "7ac1ed80-beef-454b-b240-73bd067649a5",
+                  "name": "Internal server error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: apikey",
+                        "key": "Authorization",
+                        "value": "<API Key>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"name\": \"y8yNsl3HVz\",\n  \"mounts\": [\n    {\n      \"type\": \"s3\",\n      \"bucketName\": \"<string>\",\n      \"accessKeyId\": \"<string>\",\n      \"secretAccessKey\": \"<string>\",\n      \"sessionToken\": \"<string>\",\n      \"bucketPrefix\": \"<string>\"\n    }\n  ],\n  \"authMethods\": [\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    },\n    {\n      \"type\": \"token\",\n      \"nickname\": \"<string>\",\n      \"principal\": \"<string>\",\n      \"tokenSuffix\": \"<string>\"\n    }\n  ]\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/api/disks",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "api",
+                        "disks"
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"success\": \"<boolean>\",\n  \"error\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T01:04:45.000Z",
+                  "updatedAt": "2026-07-28T01:04:45.000Z",
+                  "uid": "35240-7ac1ed80-beef-454b-b240-73bd067649a5"
+                }
+              ],
+              "createdAt": "2026-07-28T01:04:45.000Z",
+              "updatedAt": "2026-07-28T01:04:45.000Z",
+              "uid": "35240-1f2298f9-1795-452b-837e-57eb8c4ba5bf"
+            }
+          ],
+          "id": "4ac17812-7401-4a2e-9122-6a13da9271a8",
+          "createdAt": "2026-07-28T01:04:45.000Z",
+          "updatedAt": "2026-07-28T01:04:45.000Z",
+          "uid": "35240-4ac17812-7401-4a2e-9122-6a13da9271a8"
+        }
+      ],
+      "id": "354680db-d4b7-416a-af57-40a52083c0d9",
+      "createdAt": "2026-07-28T01:04:45.000Z",
+      "updatedAt": "2026-07-28T01:04:45.000Z",
+      "uid": "35240-354680db-d4b7-416a-af57-40a52083c0d9"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "Authorization",
+        "type": "string"
+      },
+      {
+        "key": "value",
+        "value": "{{apiKey}}",
+        "type": "string"
+      },
+      {
+        "key": "in",
+        "value": "header",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://control.green.us-east-1.aws.prod.archil.com"
+    }
+  ]
+}
