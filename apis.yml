@@ -138,6 +138,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/archil-controlplane-overlay.yaml
 - type: PostmanWorkspace
   url: https://www.postman.com/kinlaneapi/archil/overview
 - type: TrustCenter
