@@ -1,0 +1,85 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Archil Control Plane API Tokens API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "Authorization",
+      "value": "{{Authorization}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "API Tokens",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List API tokens",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/tokens",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Pagination cursor from a previous response"
+              }
+            ]
+          },
+          "docs": "Returns all API tokens for the authenticated account."
+        },
+        {
+          "info": {
+            "name": "Create API token",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/tokens",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new API token for programmatic access. The full token value\nis only returned once at creation time.\n"
+        },
+        {
+          "info": {
+            "name": "Delete API token",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/tokens/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The token ID (hash)"
+              }
+            ]
+          },
+          "docs": "Revokes and deletes an API token."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

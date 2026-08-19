@@ -1,0 +1,110 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Archil Control Plane API Tokens Disks API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "Authorization",
+      "value": "{{Authorization}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Disks",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List all disks",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/disks",
+            "params": [
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to return"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Pagination cursor from a previous response"
+              },
+              {
+                "name": "name",
+                "value": "",
+                "type": "query",
+                "description": "Filter disks by exact name match."
+              }
+            ]
+          },
+          "docs": "Returns all disks owned by the authenticated account."
+        },
+        {
+          "info": {
+            "name": "Create a new disk",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/disks",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new disk with the specified configuration. A default disk\ntoken user is automatically generated and returned in the response,\nso the disk is immediately mountable. The one-time disk token appears\nin `authorizedUsers[].token` and cannot be retrieved again. (This\ndisk token is scoped to the new disk and is separate from the API\nkey you used to make this request.)\n\nTo provide your own users instead, pass the deprecated `authMethods`\nfield or call AddDiskUser after creation.\n"
+        },
+        {
+          "info": {
+            "name": "Get disk details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/disks/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Disk ID (format `dsk-{16 hex chars}`)"
+              }
+            ]
+          },
+          "docs": "Returns detailed information about a specific disk."
+        },
+        {
+          "info": {
+            "name": "Delete a disk",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/disks/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Disk ID (format `dsk-{16 hex chars}`)"
+              }
+            ]
+          },
+          "docs": "Deletes a disk and all associated resources."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

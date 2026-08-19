@@ -2,11 +2,9 @@ generated: '2026-07-18'
 method: derived
 status: candidate
 source: openapi/archil-openapi-original.yml
-note: >-
-  No official hosted/remote Archil MCP server was found (checked docs, the
-  archil-data GitHub org, and MCP registries as of 2026-07-18). This is a
-  DERIVED candidate tool list — one tool per Control Plane API operation — as a
-  starting point for an MCP server. Archil's serverless exec + parallel grep map
+note: No official hosted/remote Archil MCP server was found (checked docs, the archil-data GitHub org,
+  and MCP registries as of 2026-07-18). This is a DERIVED candidate tool list — one tool per Control Plane
+  API operation — as a starting point for an MCP server. Archil's serverless exec + parallel grep map
   naturally to agent tools.
 server:
   name: archil
@@ -31,7 +29,8 @@ tools:
   description: Remove an authorized user from a disk.
   source_operation: openapi/archil-openapi-original.yml#removeDiskUser
 - name: exec_disk
-  description: Launch a serverless container with the disk mounted, run a command to completion, and shut down.
+  description: Launch a serverless container with the disk mounted, run a command to completion, and shut
+    down.
   source_operation: openapi/archil-openapi-original.yml#execDisk
 - name: grep_disk
   description: Search files under a directory on a disk for a regex, fanned out across ephemeral containers.
@@ -48,3 +47,9 @@ tools:
 - name: delete_api_token
   description: Revoke and delete an API token.
   source_operation: openapi/archil-openapi-original.yml#deleteApiToken
+deployment:
+  mode: none
+  verified: derived
+  tools: 12
+  checked: '2026-08-12'
+  source: catalog MCP census

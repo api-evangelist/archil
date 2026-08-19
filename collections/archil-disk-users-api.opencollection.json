@@ -1,0 +1,86 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Archil Control Plane API Tokens Disk Users API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "Authorization",
+      "value": "{{Authorization}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Disk Users",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Add user to disk",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/disks/:id/users",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Disk ID (format `dsk-{16 hex chars}`)"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Adds an authorized user to a disk. Users can authenticate via:\n- **token**: A shared token with a nickname and 4-character suffix\n- **awssts**: AWS STS role assumption with an IAM principal ARN\n"
+        },
+        {
+          "info": {
+            "name": "Remove user from disk",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/disks/:id/users/:userType",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Disk ID (format `dsk-{16 hex chars}`)"
+              },
+              {
+                "name": "userType",
+                "value": "",
+                "type": "path",
+                "description": "The type of user authentication"
+              },
+              {
+                "name": "identifier",
+                "value": "",
+                "type": "query",
+                "description": "Identifier of the user to remove, as returned in the creation or list response. For awssts users, this is the IAM ARN.\n"
+              },
+              {
+                "name": "principal",
+                "value": "",
+                "type": "query",
+                "description": "Use identifier instead."
+              }
+            ]
+          },
+          "docs": "Removes an authorized user from a disk."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

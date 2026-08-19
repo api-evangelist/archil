@@ -1,0 +1,87 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Archil Control Plane API Tokens Serverless Execution API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "Authorization",
+      "value": "{{Authorization}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Serverless Execution",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Execute a command on a disk",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/disks/:id/exec",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Disk ID (format `dsk-{16 hex chars}`)"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Launches a container with the specified disk mounted, runs the given\ncommand to completion, and shuts down the container. Returns immediately\nwith the container info; poll the container endpoint for completion.\n"
+        },
+        {
+          "info": {
+            "name": "Parallel grep over a directory on a disk",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/disks/:id/grep",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Disk ID (format `dsk-{16 hex chars}`)"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Searches files under a directory on the disk for lines matching a\nregular expression. Listing and matching are fanned out across\nephemeral exec containers, so the request finishes within the user's\ntime budget regardless of the size of the directory.\n\nThe user controls cost and latency with three knobs:\n\n- `maxDurationSeconds` is the wall-clock deadline (capped at 30s).\n- `concurrency` is the maximum number of parallel grep workers.\n  Higher concurrency finishes larger datasets within the deadli"
+        },
+        {
+          "info": {
+            "name": "Execute a command with multiple disks mounted",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://control.green.us-east-1.aws.prod.archil.com/api/exec",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Launches a container with the supplied set of disks each mounted at its\nown relative path under `/mnt/archil`, runs the command to completion,\nand shuts down the container. Activation is atomic: every disk mounts\nor none of them do.\n\nRelative paths must be non-empty, non-absolute, and contain no `.` /\n`..` segments. Mounting two disks at the same relative path is an\nerror.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
