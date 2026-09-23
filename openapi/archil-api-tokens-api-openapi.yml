@@ -1,7 +1,9 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
   title: Archil Control Plane API Tokens API
-  description: "The Archil Control Plane API provides programmatic access to manage disks,\nmounts, and API keys in the Archil distributed filesystem platform.\n\nAPI keys authenticate requests to this control plane and are scoped to\nyour account. They are distinct from *disk tokens*, which are per-disk\ncredentials used by clients when mounting a disk.\n\n## Authentication\n\nAll endpoints require an API key:\n\n```\nAuthorization: {API_KEY}\n```\n\nCreate API keys in the [Archil Console](https://console.archil.com) or via the API.\n\n## Response Format\n\nAll responses use a consistent envelope:\n\n```json\n{\n  \"success\": true,\n  \"data\": { ... }\n}\n```\n\nOr on error:\n\n```json\n{\n  \"success\": false,\n  \"error\": \"Error message\"\n}\n```\n"
+  description: 'The Archil Control Plane API provides programmatic access to manage disks,
+
+    mounts, and API keys in the Archil distributed filesystem platform.'
   version: 1.0.0
   contact:
     email: support@archil.com
@@ -47,9 +49,7 @@ paths:
       summary: Create API token
       description: 'Creates a new API token for programmatic access. The full token value
 
-        is only returned once at creation time.
-
-        '
+        is only returned once at creation time.'
       tags:
       - API Tokens
       requestBody:
@@ -99,7 +99,72 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 components:
+  responses:
+    Unauthorized:
+      description: Invalid or missing authentication credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
+    ApiResponse_Message:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+    CreateApiTokenRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: Token name
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          description: Token description
+          maxLength: 500
+    ErrorResponse:
+      type: object
+      required:
+      - success
+      - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
     ApiTokenResponse:
       type: object
       properties:
@@ -119,46 +184,6 @@ components:
         lastUsedAt:
           type: string
           format: date-time
-    ApiResponse_Message:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          type: object
-          properties:
-            message:
-              type: string
-    ErrorResponse:
-      type: object
-      required:
-      - success
-      - error
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          example: Invalid request parameters
-    CreateApiTokenRequest:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          description: Token name
-          minLength: 1
-          maxLength: 100
-        description:
-          type: string
-          description: Token description
-          maxLength: 500
     ApiResponse_TokenList:
       type: object
       required:
@@ -193,39 +218,7 @@ components:
                 type: string
                 description: Full token value (only shown at creation)
                 example: key-abc123...
-  responses:
-    InternalError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    ValidationError:
-      description: Validation error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    Unauthorized:
-      description: Invalid or missing authentication credentials
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    NotFound:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
   parameters:
-    Cursor:
-      name: cursor
-      in: query
-      required: false
-      description: Pagination cursor from a previous response
-      schema:
-        type: string
     Limit:
       name: limit
       in: query
@@ -235,6 +228,13 @@ components:
         type: integer
         default: 50
         maximum: 100
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Pagination cursor from a previous response
+      schema:
+        type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
