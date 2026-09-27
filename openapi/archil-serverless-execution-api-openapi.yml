@@ -182,42 +182,44 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    GrepStoppedReason:
-      type: string
-      enum:
-      - completed
-      - incomplete
-      - max_results
-      - deadline
-      - list_failed
-      description: "Why the search stopped.\n- `completed`: every file under the directory was scanned successfully.\n- `incomplete`: pipeline ran to its natural end but one or more\n  batches errored (invalid regex, unreadable file, runtime issue).\n  Results may be partial or wrong; do not rely on completeness.\n- `max_results`: hit `maxResults` before scanning everything.\n- `deadline`: hit `maxDurationSeconds`.\n- `list_failed`: directory listing failed; partial results\n  may be present.\n"
-    ExecMount:
+    ApiResponse_Exec:
       type: object
       required:
-      - disk
+      - success
+      - data
       properties:
-        disk:
-          type: string
-          description: Disk ID to mount at this relative path
-          example: dsk-abc123
-        subdirectory:
-          type: string
-          description: 'Subdirectory of the disk to expose at the mountpoint. Must be a
-
-            relative path with no `.` or `..` segments. When omitted, the
-
-            disk''s root is exposed.
-
-            '
-          example: app/logs
-        readOnly:
+        success:
           type: boolean
-          default: false
-          description: 'When true, the disk is mounted read-only inside the container.
-
-            Writes against the mount fail with EROFS.
-
-            '
+          example: true
+        data:
+          $ref: '#/components/schemas/ExecDiskResult'
+    ExecDiskRequest:
+      type: object
+      required:
+      - command
+      properties:
+        command:
+          type: string
+          description: Shell command to execute inside the container
+          example: ls -la /mnt/archil
+    GrepMatch:
+      type: object
+      required:
+      - file
+      - line
+      - text
+      properties:
+        file:
+          type: string
+          description: Path to the file (relative to the disk root).
+          example: data/logs/2026-05-03.log
+        line:
+          type: integer
+          description: 1-based line number where the match occurred.
+          example: 142
+        text:
+          type: string
+          description: The matching line.
     ExecRequest:
       type: object
       required:
@@ -256,104 +258,6 @@ components:
           type: string
           description: Shell command to execute inside the container
           example: ls -la /mnt/archil/data /mnt/archil/logs
-    GrepMatch:
-      type: object
-      required:
-      - file
-      - line
-      - text
-      properties:
-        file:
-          type: string
-          description: Path to the file (relative to the disk root).
-          example: data/logs/2026-05-03.log
-        line:
-          type: integer
-          description: 1-based line number where the match occurred.
-          example: 142
-        text:
-          type: string
-          description: The matching line.
-    ApiResponse_GrepDisk:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          $ref: '#/components/schemas/GrepDiskResult'
-    ExecTiming:
-      type: object
-      description: Server-measured timings for an exec request.
-      required:
-      - totalMs
-      - queueMs
-      - executeMs
-      properties:
-        totalMs:
-          type: integer
-          description: 'End-to-end wall clock measured on the server, from request arrival to response.
-
-            '
-          example: 2450
-        queueMs:
-          type: integer
-          description: 'Time spent queueing, scheduling, booting/claiming a VM, and mounting the filesystem before the command started running.
-
-            '
-          example: 150
-        executeMs:
-          type: integer
-          description: 'Time the user''s command itself ran, measured by the runtime.
-
-            '
-          example: 2300
-    ExecDiskResult:
-      type: object
-      required:
-      - exitCode
-      - stdout
-      - stderr
-      - timing
-      properties:
-        exitCode:
-          type: integer
-          description: Exit code of the command (0 = success)
-          example: 0
-        stdout:
-          type: string
-          description: Standard output from the command
-        stderr:
-          type: string
-          description: Standard error from the command
-        timing:
-          $ref: '#/components/schemas/ExecTiming'
-    ApiResponse_ExecDisk:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          $ref: '#/components/schemas/ExecDiskResult'
-    ErrorResponse:
-      type: object
-      required:
-      - success
-      - error
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          example: Invalid request parameters
     GrepDiskRequest:
       type: object
       required:
@@ -414,26 +318,32 @@ components:
             first, not the lexicographically first N.
 
             '
-    ExecDiskRequest:
+    ExecTiming:
       type: object
+      description: Server-measured timings for an exec request.
       required:
-      - command
+      - totalMs
+      - queueMs
+      - executeMs
       properties:
-        command:
-          type: string
-          description: Shell command to execute inside the container
-          example: ls -la /mnt/archil
-    ApiResponse_Exec:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          $ref: '#/components/schemas/ExecDiskResult'
+        totalMs:
+          type: integer
+          description: 'End-to-end wall clock measured on the server, from request arrival to response.
+
+            '
+          example: 2450
+        queueMs:
+          type: integer
+          description: 'Time spent queueing, scheduling, booting/claiming a VM, and mounting the filesystem before the command started running.
+
+            '
+          example: 150
+        executeMs:
+          type: integer
+          description: 'Time the user''s command itself ran, measured by the runtime.
+
+            '
+          example: 2300
     GrepDiskResult:
       type: object
       required:
@@ -489,9 +399,99 @@ components:
             no batches ran.
 
             '
+    GrepStoppedReason:
+      type: string
+      enum:
+      - completed
+      - incomplete
+      - max_results
+      - deadline
+      - list_failed
+      description: "Why the search stopped.\n- `completed`: every file under the directory was scanned successfully.\n- `incomplete`: pipeline ran to its natural end but one or more\n  batches errored (invalid regex, unreadable file, runtime issue).\n  Results may be partial or wrong; do not rely on completeness.\n- `max_results`: hit `maxResults` before scanning everything.\n- `deadline`: hit `maxDurationSeconds`.\n- `list_failed`: directory listing failed; partial results\n  may be present.\n"
+    ApiResponse_ExecDisk:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/ExecDiskResult'
+    ExecMount:
+      type: object
+      required:
+      - disk
+      properties:
+        disk:
+          type: string
+          description: Disk ID to mount at this relative path
+          example: dsk-abc123
+        subdirectory:
+          type: string
+          description: 'Subdirectory of the disk to expose at the mountpoint. Must be a
+
+            relative path with no `.` or `..` segments. When omitted, the
+
+            disk''s root is exposed.
+
+            '
+          example: app/logs
+        readOnly:
+          type: boolean
+          default: false
+          description: 'When true, the disk is mounted read-only inside the container.
+
+            Writes against the mount fail with EROFS.
+
+            '
+    ExecDiskResult:
+      type: object
+      required:
+      - exitCode
+      - stdout
+      - stderr
+      - timing
+      properties:
+        exitCode:
+          type: integer
+          description: Exit code of the command (0 = success)
+          example: 0
+        stdout:
+          type: string
+          description: Standard output from the command
+        stderr:
+          type: string
+          description: Standard error from the command
+        timing:
+          $ref: '#/components/schemas/ExecTiming'
+    ApiResponse_GrepDisk:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/GrepDiskResult'
+    ErrorResponse:
+      type: object
+      required:
+      - success
+      - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
   responses:
-    Unauthorized:
-      description: Invalid or missing authentication credentials
+    ValidationError:
+      description: Validation error
       content:
         application/json:
           schema:
@@ -508,8 +508,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-    ValidationError:
-      description: Validation error
+    Unauthorized:
+      description: Invalid or missing authentication credentials
       content:
         application/json:
           schema:

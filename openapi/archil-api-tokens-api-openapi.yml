@@ -99,9 +99,26 @@ paths:
         '500':
           $ref: '#/components/responses/InternalError'
 components:
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Pagination cursor from a previous response
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of items to return
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
   responses:
-    Unauthorized:
-      description: Invalid or missing authentication credentials
+    ValidationError:
+      description: Validation error
       content:
         application/json:
           schema:
@@ -112,78 +129,19 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-    ValidationError:
-      description: Validation error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
     NotFound:
       description: Resource not found
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Invalid or missing authentication credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
-    ApiResponse_Message:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          type: object
-          properties:
-            message:
-              type: string
-    CreateApiTokenRequest:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          description: Token name
-          minLength: 1
-          maxLength: 100
-        description:
-          type: string
-          description: Token description
-          maxLength: 500
-    ErrorResponse:
-      type: object
-      required:
-      - success
-      - error
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          example: Invalid request parameters
-    ApiTokenResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Token hash/ID
-        name:
-          type: string
-        description:
-          type: string
-        tokenSuffix:
-          type: string
-          description: Last 4 characters of the token
-        createdAt:
-          type: string
-          format: date-time
-        lastUsedAt:
-          type: string
-          format: date-time
     ApiResponse_TokenList:
       type: object
       required:
@@ -218,23 +176,65 @@ components:
                 type: string
                 description: Full token value (only shown at creation)
                 example: key-abc123...
-  parameters:
-    Limit:
-      name: limit
-      in: query
-      required: false
-      description: Maximum number of items to return
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-    Cursor:
-      name: cursor
-      in: query
-      required: false
-      description: Pagination cursor from a previous response
-      schema:
-        type: string
+    ApiResponse_Message:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+    ApiTokenResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Token hash/ID
+        name:
+          type: string
+        description:
+          type: string
+        tokenSuffix:
+          type: string
+          description: Last 4 characters of the token
+        createdAt:
+          type: string
+          format: date-time
+        lastUsedAt:
+          type: string
+          format: date-time
+    CreateApiTokenRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: Token name
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          description: Token description
+          maxLength: 500
+    ErrorResponse:
+      type: object
+      required:
+      - success
+      - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
   securitySchemes:
     ApiKeyAuth:
       type: apiKey

@@ -165,6 +165,76 @@ components:
         success:
           type: boolean
           example: true
+    ApiResponse_Disk:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/DiskResponse'
+    MountConfigResponse:
+      type: object
+      description: Mount configuration details (secrets omitted)
+      properties:
+        bucketName:
+          type: string
+          description: Bucket name
+        bucketEndpoint:
+          type: string
+          description: Storage endpoint URL
+        bucketPrefix:
+          type: string
+          description: Prefix within the bucket
+        sessionId:
+          type: string
+          description: Session identifier for IAM-authorized mounts
+    ErrorResponse:
+      type: object
+      required:
+      - success
+      - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
+    AuthorizedUser:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+          - token
+          - awssts
+        principal:
+          type: string
+          deprecated: true
+          description: 'Use identifier instead. Only populated for awssts type (the IAM ARN).
+
+            '
+        nickname:
+          type: string
+        tokenSuffix:
+          type: string
+        token:
+          type: string
+          description: 'The generated disk token (used by clients when mounting the disk). Only present in the response when the server generates the token (i.e. principal was not provided). This value is shown exactly once and cannot be retrieved again.
+
+            '
+        identifier:
+          type: string
+          description: 'Stable identifier for this user, returned in creation and list responses. Use this value with DELETE /api/disks/{id}/users/{type}?identifier={identifier} to remove the user. For awssts users, this is the IAM ARN.
+
+            '
+        createdAt:
+          type: string
+          format: date-time
     AwsStsUser:
       type: object
       required:
@@ -179,34 +249,53 @@ components:
           type: string
           description: IAM principal ARN
           maxLength: 2048
-    ApiResponse_DiskList:
-      description: 'All API responses use a standard envelope with `success: boolean` and `data` (on success) or `error: string` (on failure). The ApiResponse_* schemas each define the specific `data` shape for their endpoint.
-
-        '
+    ConnectedClient:
       type: object
-      required:
-      - success
-      - data
       properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/DiskResponse'
-    ErrorResponse:
-      type: object
-      required:
-      - success
-      - error
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
+        id:
           type: string
-          example: Invalid request parameters
+        ipAddress:
+          type: string
+        connectedAt:
+          type: string
+          format: date-time
+    R2Mount:
+      type: object
+      title: Cloudflare R2
+      description: Mount configuration for Cloudflare R2 buckets
+      required:
+      - type
+      - bucketName
+      - bucketEndpoint
+      - accessKeyId
+      - secretAccessKey
+      properties:
+        type:
+          type: string
+          enum:
+          - r2
+          description: Mount type identifier
+        bucketName:
+          type: string
+          description: R2 bucket name
+          example: my-r2-bucket
+        bucketEndpoint:
+          type: string
+          description: R2 endpoint URL
+          example: https://accountid.r2.cloudflarestorage.com
+        accessKeyId:
+          type: string
+          description: R2 access key ID
+          writeOnly: true
+        secretAccessKey:
+          type: string
+          description: R2 secret access key
+          format: password
+          writeOnly: true
+        bucketPrefix:
+          type: string
+          description: Prefix within the bucket (optional)
+          example: data/
     S3Mount:
       type: object
       title: S3
@@ -240,6 +329,84 @@ components:
           type: string
           description: Prefix within the bucket
           example: data/
+    AzureBlobMount:
+      type: object
+      title: Azure Blob Storage
+      description: Mount configuration for Azure Blob Storage containers
+      required:
+      - type
+      - containerName
+      - tenantId
+      - clientId
+      - clientSecret
+      properties:
+        type:
+          type: string
+          enum:
+          - azure-blob
+          description: Mount type identifier
+        containerName:
+          type: string
+          description: Azure blob container name
+          example: my-container
+        endpoint:
+          type: string
+          description: Azure blob endpoint URL (optional if storageAccountName provided)
+          example: https://myaccount.blob.core.windows.net
+        storageAccountName:
+          type: string
+          description: Azure storage account name (used to derive endpoint if not provided)
+          example: myaccount
+        tenantId:
+          type: string
+          description: Azure AD tenant ID
+        clientId:
+          type: string
+          description: Azure AD application client ID
+        clientSecret:
+          type: string
+          description: Azure AD application client secret
+          format: password
+          writeOnly: true
+        bucketPrefix:
+          type: string
+          description: Prefix within the container
+          example: data/
+    ApiResponse_CreateDisk:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            diskId:
+              type: string
+              example: dsk-0123456789abcdef
+            authorizedUsers:
+              type: array
+              items:
+                $ref: '#/components/schemas/AuthorizedUser'
+    ApiResponse_DiskList:
+      description: 'All API responses use a standard envelope with `success: boolean` and `data` (on success) or `error: string` (on failure). The ApiResponse_* schemas each define the specific `data` shape for their endpoint.
+
+        '
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiskResponse'
     MountResponse:
       type: object
       properties:
@@ -286,180 +453,54 @@ components:
           - iam
           - accessKeys
           - oauth
-    MountConfig:
+    DiskMetrics:
+      type: object
+      properties:
+        dataTransfer:
+          type: string
+          description: Data transfer amount with unit (e.g., "1.5 GB")
+        requests:
+          type: string
+          description: Total request count as a formatted string (e.g., "1,234")
+        avgResponseTime:
+          type: string
+          description: Average response time with unit (e.g., "45ms")
+    DiskUser:
       oneOf:
-      - $ref: '#/components/schemas/S3Mount'
-      - $ref: '#/components/schemas/GCSMount'
-      - $ref: '#/components/schemas/R2Mount'
-      - $ref: '#/components/schemas/S3CompatibleMount'
-      - $ref: '#/components/schemas/AzureBlobMount'
+      - $ref: '#/components/schemas/TokenUser'
+      - $ref: '#/components/schemas/AwsStsUser'
       discriminator:
         propertyName: type
         mapping:
-          s3: '#/components/schemas/S3Mount'
-          gcs: '#/components/schemas/GCSMount'
-          r2: '#/components/schemas/R2Mount'
-          s3-compatible: '#/components/schemas/S3CompatibleMount'
-          azure-blob: '#/components/schemas/AzureBlobMount'
-    AzureBlobMount:
-      type: object
-      title: Azure Blob Storage
-      description: Mount configuration for Azure Blob Storage containers
-      required:
-      - type
-      - containerName
-      - tenantId
-      - clientId
-      - clientSecret
-      properties:
-        type:
-          type: string
-          enum:
-          - azure-blob
-          description: Mount type identifier
-        containerName:
-          type: string
-          description: Azure blob container name
-          example: my-container
-        endpoint:
-          type: string
-          description: Azure blob endpoint URL (optional if storageAccountName provided)
-          example: https://myaccount.blob.core.windows.net
-        storageAccountName:
-          type: string
-          description: Azure storage account name (used to derive endpoint if not provided)
-          example: myaccount
-        tenantId:
-          type: string
-          description: Azure AD tenant ID
-        clientId:
-          type: string
-          description: Azure AD application client ID
-        clientSecret:
-          type: string
-          description: Azure AD application client secret
-          format: password
-          writeOnly: true
-        bucketPrefix:
-          type: string
-          description: Prefix within the container
-          example: data/
-    S3CompatibleMount:
-      type: object
-      title: S3-Compatible
-      description: Mount configuration for S3-compatible storage (MinIO, Backblaze B2, etc.)
-      required:
-      - type
-      - bucketName
-      - bucketEndpoint
-      - accessKeyId
-      - secretAccessKey
-      properties:
-        type:
-          type: string
-          enum:
-          - s3-compatible
-          description: Mount type identifier
-        bucketName:
-          type: string
-          description: Bucket name
-          example: my-bucket
-        bucketEndpoint:
-          type: string
-          description: S3-compatible endpoint URL
-          example: https://s3.us-west-001.backblazeb2.com
-        accessKeyId:
-          type: string
-          description: Access key ID
-          writeOnly: true
-        secretAccessKey:
-          type: string
-          description: Secret access key
-          format: password
-          writeOnly: true
-        bucketPrefix:
-          type: string
-          description: Prefix within the bucket (optional)
-          example: data/
-    ApiResponse_CreateDisk:
+          token: '#/components/schemas/TokenUser'
+          awssts: '#/components/schemas/AwsStsUser'
+    CreateDiskRequest:
       type: object
       required:
-      - success
-      - data
+      - name
       properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          type: object
-          properties:
-            diskId:
-              type: string
-              example: dsk-0123456789abcdef
-            authorizedUsers:
-              type: array
-              items:
-                $ref: '#/components/schemas/AuthorizedUser'
-    TokenUser:
-      type: object
-      required:
-      - type
-      - nickname
-      properties:
-        type:
+        name:
           type: string
-          enum:
-          - token
-        principal:
-          type: string
-          maxLength: 2048
+          description: Disk name (alphanumeric, dashes, underscores)
+          minLength: 1
+          maxLength: 100
+          pattern: ^[a-zA-Z0-9_-]+$
+          example: my-data-disk
+        mounts:
+          type: array
+          description: Storage mount to attach. Omit for archil-managed storage.
+          minItems: 0
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/MountConfig'
+        authMethods:
+          type: array
           deprecated: true
-          description: 'Deprecated. Client-provided token. If omitted, the server generates a cryptographically secure token and returns it in the response.
+          description: 'Deprecated. Use AddDiskUser after creation instead. When provided, suppresses the default auto-generated token user.
 
             '
-        nickname:
-          type: string
-          maxLength: 255
-        tokenSuffix:
-          type: string
-          minLength: 4
-          maxLength: 4
-          deprecated: true
-          description: 'Deprecated. Last 4 characters of the token. Required when principal is provided; ignored when the server generates the token.
-
-            '
-    GCSMount:
-      type: object
-      title: Google Cloud Storage
-      description: Mount configuration for Google Cloud Storage buckets
-      required:
-      - type
-      - bucketName
-      - accessKeyId
-      - secretAccessKey
-      properties:
-        type:
-          type: string
-          enum:
-          - gcs
-          description: Mount type identifier
-        bucketName:
-          type: string
-          description: GCS bucket name
-          example: my-gcs-bucket
-        accessKeyId:
-          type: string
-          description: HMAC access key ID
-          writeOnly: true
-        secretAccessKey:
-          type: string
-          description: HMAC secret access key
-          format: password
-          writeOnly: true
-        bucketPrefix:
-          type: string
-          description: Prefix within the bucket (optional)
-          example: data/
+          items:
+            $ref: '#/components/schemas/DiskUser'
     DiskResponse:
       type: object
       required:
@@ -529,19 +570,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AuthorizedUser'
-    DiskUser:
-      oneOf:
-      - $ref: '#/components/schemas/TokenUser'
-      - $ref: '#/components/schemas/AwsStsUser'
-      discriminator:
-        propertyName: type
-        mapping:
-          token: '#/components/schemas/TokenUser'
-          awssts: '#/components/schemas/AwsStsUser'
-    R2Mount:
+    S3CompatibleMount:
       type: object
-      title: Cloudflare R2
-      description: Mount configuration for Cloudflare R2 buckets
+      title: S3-Compatible
+      description: Mount configuration for S3-compatible storage (MinIO, Backblaze B2, etc.)
       required:
       - type
       - bucketName
@@ -552,177 +584,107 @@ components:
         type:
           type: string
           enum:
-          - r2
+          - s3-compatible
           description: Mount type identifier
         bucketName:
           type: string
-          description: R2 bucket name
-          example: my-r2-bucket
+          description: Bucket name
+          example: my-bucket
         bucketEndpoint:
           type: string
-          description: R2 endpoint URL
-          example: https://accountid.r2.cloudflarestorage.com
+          description: S3-compatible endpoint URL
+          example: https://s3.us-west-001.backblazeb2.com
         accessKeyId:
           type: string
-          description: R2 access key ID
+          description: Access key ID
           writeOnly: true
         secretAccessKey:
           type: string
-          description: R2 secret access key
+          description: Secret access key
           format: password
           writeOnly: true
         bucketPrefix:
           type: string
           description: Prefix within the bucket (optional)
           example: data/
-    AuthorizedUser:
+    GCSMount:
       type: object
+      title: Google Cloud Storage
+      description: Mount configuration for Google Cloud Storage buckets
+      required:
+      - type
+      - bucketName
+      - accessKeyId
+      - secretAccessKey
+      properties:
+        type:
+          type: string
+          enum:
+          - gcs
+          description: Mount type identifier
+        bucketName:
+          type: string
+          description: GCS bucket name
+          example: my-gcs-bucket
+        accessKeyId:
+          type: string
+          description: HMAC access key ID
+          writeOnly: true
+        secretAccessKey:
+          type: string
+          description: HMAC secret access key
+          format: password
+          writeOnly: true
+        bucketPrefix:
+          type: string
+          description: Prefix within the bucket (optional)
+          example: data/
+    TokenUser:
+      type: object
+      required:
+      - type
+      - nickname
       properties:
         type:
           type: string
           enum:
           - token
-          - awssts
         principal:
           type: string
+          maxLength: 2048
           deprecated: true
-          description: 'Use identifier instead. Only populated for awssts type (the IAM ARN).
+          description: 'Deprecated. Client-provided token. If omitted, the server generates a cryptographically secure token and returns it in the response.
 
             '
         nickname:
           type: string
+          maxLength: 255
         tokenSuffix:
           type: string
-        token:
-          type: string
-          description: 'The generated disk token (used by clients when mounting the disk). Only present in the response when the server generates the token (i.e. principal was not provided). This value is shown exactly once and cannot be retrieved again.
-
-            '
-        identifier:
-          type: string
-          description: 'Stable identifier for this user, returned in creation and list responses. Use this value with DELETE /api/disks/{id}/users/{type}?identifier={identifier} to remove the user. For awssts users, this is the IAM ARN.
-
-            '
-        createdAt:
-          type: string
-          format: date-time
-    ConnectedClient:
-      type: object
-      properties:
-        id:
-          type: string
-        ipAddress:
-          type: string
-        connectedAt:
-          type: string
-          format: date-time
-    ApiResponse_Disk:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          $ref: '#/components/schemas/DiskResponse'
-    CreateDiskRequest:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          description: Disk name (alphanumeric, dashes, underscores)
-          minLength: 1
-          maxLength: 100
-          pattern: ^[a-zA-Z0-9_-]+$
-          example: my-data-disk
-        mounts:
-          type: array
-          description: Storage mount to attach. Omit for archil-managed storage.
-          minItems: 0
-          maxItems: 1
-          items:
-            $ref: '#/components/schemas/MountConfig'
-        authMethods:
-          type: array
+          minLength: 4
+          maxLength: 4
           deprecated: true
-          description: 'Deprecated. Use AddDiskUser after creation instead. When provided, suppresses the default auto-generated token user.
+          description: 'Deprecated. Last 4 characters of the token. Required when principal is provided; ignored when the server generates the token.
 
             '
-          items:
-            $ref: '#/components/schemas/DiskUser'
-    MountConfigResponse:
-      type: object
-      description: Mount configuration details (secrets omitted)
-      properties:
-        bucketName:
-          type: string
-          description: Bucket name
-        bucketEndpoint:
-          type: string
-          description: Storage endpoint URL
-        bucketPrefix:
-          type: string
-          description: Prefix within the bucket
-        sessionId:
-          type: string
-          description: Session identifier for IAM-authorized mounts
-    DiskMetrics:
-      type: object
-      properties:
-        dataTransfer:
-          type: string
-          description: Data transfer amount with unit (e.g., "1.5 GB")
-        requests:
-          type: string
-          description: Total request count as a formatted string (e.g., "1,234")
-        avgResponseTime:
-          type: string
-          description: Average response time with unit (e.g., "45ms")
-  parameters:
-    Cursor:
-      name: cursor
-      in: query
-      required: false
-      description: Pagination cursor from a previous response
-      schema:
-        type: string
-    Limit:
-      name: limit
-      in: query
-      required: false
-      description: Maximum number of items to return
-      schema:
-        type: integer
-        default: 50
-        maximum: 100
-    DiskId:
-      name: id
-      in: path
-      required: true
-      description: Disk ID (format `dsk-{16 hex chars}`)
-      schema:
-        type: string
-        pattern: ^dsk-[0-9a-f]{16}$
-        example: dsk-0123456789abcdef
+    MountConfig:
+      oneOf:
+      - $ref: '#/components/schemas/S3Mount'
+      - $ref: '#/components/schemas/GCSMount'
+      - $ref: '#/components/schemas/R2Mount'
+      - $ref: '#/components/schemas/S3CompatibleMount'
+      - $ref: '#/components/schemas/AzureBlobMount'
+      discriminator:
+        propertyName: type
+        mapping:
+          s3: '#/components/schemas/S3Mount'
+          gcs: '#/components/schemas/GCSMount'
+          r2: '#/components/schemas/R2Mount'
+          s3-compatible: '#/components/schemas/S3CompatibleMount'
+          azure-blob: '#/components/schemas/AzureBlobMount'
   responses:
-    ValidationError:
-      description: Validation error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
       description: Invalid or missing authentication credentials
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-    InternalError:
-      description: Internal server error
       content:
         application/json:
           schema:
@@ -733,6 +695,44 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  parameters:
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Pagination cursor from a previous response
+      schema:
+        type: string
+    DiskId:
+      name: id
+      in: path
+      required: true
+      description: Disk ID (format `dsk-{16 hex chars}`)
+      schema:
+        type: string
+        pattern: ^dsk-[0-9a-f]{16}$
+        example: dsk-0123456789abcdef
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of items to return
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
