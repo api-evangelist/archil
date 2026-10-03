@@ -109,19 +109,65 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-    InternalError:
-      description: Internal server error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
       description: Invalid or missing authentication credentials
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
+    ApiResponse_Message:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+    ApiResponse_AuthorizedUser:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/AuthorizedUser'
+    DiskUser:
+      oneOf:
+      - $ref: '#/components/schemas/TokenUser'
+      - $ref: '#/components/schemas/AwsStsUser'
+      discriminator:
+        propertyName: type
+        mapping:
+          token: '#/components/schemas/TokenUser'
+          awssts: '#/components/schemas/AwsStsUser'
+    ErrorResponse:
+      type: object
+      required:
+      - success
+      - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
     AuthorizedUser:
       type: object
       properties:
@@ -167,52 +213,6 @@ components:
           type: string
           description: IAM principal ARN
           maxLength: 2048
-    DiskUser:
-      oneOf:
-      - $ref: '#/components/schemas/TokenUser'
-      - $ref: '#/components/schemas/AwsStsUser'
-      discriminator:
-        propertyName: type
-        mapping:
-          token: '#/components/schemas/TokenUser'
-          awssts: '#/components/schemas/AwsStsUser'
-    ErrorResponse:
-      type: object
-      required:
-      - success
-      - error
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          example: Invalid request parameters
-    ApiResponse_Message:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          type: object
-          properties:
-            message:
-              type: string
-    ApiResponse_AuthorizedUser:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          $ref: '#/components/schemas/AuthorizedUser'
     TokenUser:
       type: object
       required:

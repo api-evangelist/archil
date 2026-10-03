@@ -182,26 +182,33 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 components:
   schemas:
-    ApiResponse_Exec:
+    ExecMount:
       type: object
       required:
-      - success
-      - data
+      - disk
       properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          $ref: '#/components/schemas/ExecDiskResult'
-    ExecDiskRequest:
-      type: object
-      required:
-      - command
-      properties:
-        command:
+        disk:
           type: string
-          description: Shell command to execute inside the container
-          example: ls -la /mnt/archil
+          description: Disk ID to mount at this relative path
+          example: dsk-abc123
+        subdirectory:
+          type: string
+          description: 'Subdirectory of the disk to expose at the mountpoint. Must be a
+
+            relative path with no `.` or `..` segments. When omitted, the
+
+            disk''s root is exposed.
+
+            '
+          example: app/logs
+        readOnly:
+          type: boolean
+          default: false
+          description: 'When true, the disk is mounted read-only inside the container.
+
+            Writes against the mount fail with EROFS.
+
+            '
     GrepMatch:
       type: object
       required:
@@ -220,44 +227,67 @@ components:
         text:
           type: string
           description: The matching line.
-    ExecRequest:
+    ErrorResponse:
       type: object
       required:
-      - disks
+      - success
+      - error
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          example: Invalid request parameters
+    ApiResponse_ExecDisk:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/ExecDiskResult'
+    GrepStoppedReason:
+      type: string
+      enum:
+      - completed
+      - incomplete
+      - max_results
+      - deadline
+      - list_failed
+      description: "Why the search stopped.\n- `completed`: every file under the directory was scanned successfully.\n- `incomplete`: pipeline ran to its natural end but one or more\n  batches errored (invalid regex, unreadable file, runtime issue).\n  Results may be partial or wrong; do not rely on completeness.\n- `max_results`: hit `maxResults` before scanning everything.\n- `deadline`: hit `maxDurationSeconds`.\n- `list_failed`: directory listing failed; partial results\n  may be present.\n"
+    ExecDiskResult:
+      type: object
+      required:
+      - exitCode
+      - stdout
+      - stderr
+      - timing
+      properties:
+        exitCode:
+          type: integer
+          description: Exit code of the command (0 = success)
+          example: 0
+        stdout:
+          type: string
+          description: Standard output from the command
+        stderr:
+          type: string
+          description: Standard error from the command
+        timing:
+          $ref: '#/components/schemas/ExecTiming'
+    ExecDiskRequest:
+      type: object
+      required:
       - command
       properties:
-        disks:
-          type: object
-          description: 'Map of relative path under `/mnt/archil` to the disk to mount
-
-            there. At least one entry is required. Relative paths must be
-
-            non-empty, non-absolute, and contain no `.` or `..` segments.
-
-
-            Each value is either a plain disk ID string (mounts the disk''s
-
-            root, read-write) or an object that additionally selects a
-
-            subdirectory of the disk and/or marks the mount as read-only.
-
-            '
-          additionalProperties:
-            oneOf:
-            - type: string
-              description: Disk ID; mounts the disk's root as read-write
-              example: dsk-abc123
-            - $ref: '#/components/schemas/ExecMount'
-          example:
-            data: dsk-abc123
-            logs:
-              disk: dsk-def456
-              subdirectory: app/logs
-              readOnly: true
         command:
           type: string
           description: Shell command to execute inside the container
-          example: ls -la /mnt/archil/data /mnt/archil/logs
+          example: ls -la /mnt/archil
     GrepDiskRequest:
       type: object
       required:
@@ -318,32 +348,55 @@ components:
             first, not the lexicographically first N.
 
             '
-    ExecTiming:
+    ExecRequest:
       type: object
-      description: Server-measured timings for an exec request.
       required:
-      - totalMs
-      - queueMs
-      - executeMs
+      - disks
+      - command
       properties:
-        totalMs:
-          type: integer
-          description: 'End-to-end wall clock measured on the server, from request arrival to response.
+        disks:
+          type: object
+          description: 'Map of relative path under `/mnt/archil` to the disk to mount
+
+            there. At least one entry is required. Relative paths must be
+
+            non-empty, non-absolute, and contain no `.` or `..` segments.
+
+
+            Each value is either a plain disk ID string (mounts the disk''s
+
+            root, read-write) or an object that additionally selects a
+
+            subdirectory of the disk and/or marks the mount as read-only.
 
             '
-          example: 2450
-        queueMs:
-          type: integer
-          description: 'Time spent queueing, scheduling, booting/claiming a VM, and mounting the filesystem before the command started running.
-
-            '
-          example: 150
-        executeMs:
-          type: integer
-          description: 'Time the user''s command itself ran, measured by the runtime.
-
-            '
-          example: 2300
+          additionalProperties:
+            oneOf:
+            - type: string
+              description: Disk ID; mounts the disk's root as read-write
+              example: dsk-abc123
+            - $ref: '#/components/schemas/ExecMount'
+          example:
+            data: dsk-abc123
+            logs:
+              disk: dsk-def456
+              subdirectory: app/logs
+              readOnly: true
+        command:
+          type: string
+          description: Shell command to execute inside the container
+          example: ls -la /mnt/archil/data /mnt/archil/logs
+    ApiResponse_Exec:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/ExecDiskResult'
     GrepDiskResult:
       type: object
       required:
@@ -399,73 +452,32 @@ components:
             no batches ran.
 
             '
-    GrepStoppedReason:
-      type: string
-      enum:
-      - completed
-      - incomplete
-      - max_results
-      - deadline
-      - list_failed
-      description: "Why the search stopped.\n- `completed`: every file under the directory was scanned successfully.\n- `incomplete`: pipeline ran to its natural end but one or more\n  batches errored (invalid regex, unreadable file, runtime issue).\n  Results may be partial or wrong; do not rely on completeness.\n- `max_results`: hit `maxResults` before scanning everything.\n- `deadline`: hit `maxDurationSeconds`.\n- `list_failed`: directory listing failed; partial results\n  may be present.\n"
-    ApiResponse_ExecDisk:
+    ExecTiming:
       type: object
+      description: Server-measured timings for an exec request.
       required:
-      - success
-      - data
+      - totalMs
+      - queueMs
+      - executeMs
       properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          $ref: '#/components/schemas/ExecDiskResult'
-    ExecMount:
-      type: object
-      required:
-      - disk
-      properties:
-        disk:
-          type: string
-          description: Disk ID to mount at this relative path
-          example: dsk-abc123
-        subdirectory:
-          type: string
-          description: 'Subdirectory of the disk to expose at the mountpoint. Must be a
-
-            relative path with no `.` or `..` segments. When omitted, the
-
-            disk''s root is exposed.
-
-            '
-          example: app/logs
-        readOnly:
-          type: boolean
-          default: false
-          description: 'When true, the disk is mounted read-only inside the container.
-
-            Writes against the mount fail with EROFS.
-
-            '
-    ExecDiskResult:
-      type: object
-      required:
-      - exitCode
-      - stdout
-      - stderr
-      - timing
-      properties:
-        exitCode:
+        totalMs:
           type: integer
-          description: Exit code of the command (0 = success)
-          example: 0
-        stdout:
-          type: string
-          description: Standard output from the command
-        stderr:
-          type: string
-          description: Standard error from the command
-        timing:
-          $ref: '#/components/schemas/ExecTiming'
+          description: 'End-to-end wall clock measured on the server, from request arrival to response.
+
+            '
+          example: 2450
+        queueMs:
+          type: integer
+          description: 'Time spent queueing, scheduling, booting/claiming a VM, and mounting the filesystem before the command started running.
+
+            '
+          example: 150
+        executeMs:
+          type: integer
+          description: 'Time the user''s command itself ran, measured by the runtime.
+
+            '
+          example: 2300
     ApiResponse_GrepDisk:
       type: object
       required:
@@ -477,18 +489,6 @@ components:
           example: true
         data:
           $ref: '#/components/schemas/GrepDiskResult'
-    ErrorResponse:
-      type: object
-      required:
-      - success
-      - error
-      properties:
-        success:
-          type: boolean
-          example: false
-        error:
-          type: string
-          example: Invalid request parameters
   responses:
     ValidationError:
       description: Validation error
@@ -496,8 +496,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-    InternalError:
-      description: Internal server error
+    Unauthorized:
+      description: Invalid or missing authentication credentials
       content:
         application/json:
           schema:
@@ -508,8 +508,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
-    Unauthorized:
-      description: Invalid or missing authentication credentials
+    InternalError:
+      description: Internal server error
       content:
         application/json:
           schema:
