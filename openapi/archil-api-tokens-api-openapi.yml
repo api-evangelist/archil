@@ -100,12 +100,6 @@ paths:
           $ref: '#/components/responses/InternalError'
 components:
   responses:
-    ValidationError:
-      description: Validation error
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
       description: Invalid or missing authentication credentials
       content:
@@ -124,21 +118,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   schemas:
-    ApiResponse_Message:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          type: object
-          properties:
-            message:
-              type: string
     ErrorResponse:
       type: object
       required:
@@ -151,36 +137,6 @@ components:
         error:
           type: string
           example: Invalid request parameters
-    ApiResponse_TokenList:
-      type: object
-      required:
-      - success
-      - data
-      properties:
-        success:
-          type: boolean
-          example: true
-        data:
-          type: object
-          properties:
-            tokens:
-              type: array
-              items:
-                $ref: '#/components/schemas/ApiTokenResponse'
-    CreateApiTokenRequest:
-      type: object
-      required:
-      - name
-      properties:
-        name:
-          type: string
-          description: Token name
-          minLength: 1
-          maxLength: 100
-        description:
-          type: string
-          description: Token description
-          maxLength: 500
     ApiTokenResponse:
       type: object
       properties:
@@ -200,6 +156,20 @@ components:
         lastUsedAt:
           type: string
           format: date-time
+    CreateApiTokenRequest:
+      type: object
+      required:
+      - name
+      properties:
+        name:
+          type: string
+          description: Token name
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+          description: Token description
+          maxLength: 500
     ApiResponse_TokenCreated:
       type: object
       required:
@@ -218,14 +188,37 @@ components:
                 type: string
                 description: Full token value (only shown at creation)
                 example: key-abc123...
+    ApiResponse_Message:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+    ApiResponse_TokenList:
+      type: object
+      required:
+      - success
+      - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          properties:
+            tokens:
+              type: array
+              items:
+                $ref: '#/components/schemas/ApiTokenResponse'
   parameters:
-    Cursor:
-      name: cursor
-      in: query
-      required: false
-      description: Pagination cursor from a previous response
-      schema:
-        type: string
     Limit:
       name: limit
       in: query
@@ -235,6 +228,13 @@ components:
         type: integer
         default: 50
         maximum: 100
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: Pagination cursor from a previous response
+      schema:
+        type: string
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
