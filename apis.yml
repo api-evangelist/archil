@@ -155,6 +155,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Plans
+  url: plans/archil-plans-pricing.yml
 - type: CapabilityMap
   url: capabilities/archil-capability-edges.yml
   name: Archil Business Capability Map
