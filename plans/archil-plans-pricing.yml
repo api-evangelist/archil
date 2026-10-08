@@ -1,0 +1,58 @@
+# Pricing transcribed from the provider's own page — see provenance. Numbers are quoted, not derived.
+generated: '2026-10-07'
+method: searched
+source: https://archil.com/pricing
+sources:
+- https://archil.com/pricing
+provenance:
+  tool: all/0-working/economics/harvest_pricing.py
+  run: 20261007T104522
+  grounding: every price_text was found verbatim in the fetched page text
+audience: developer-api
+pricing_basis: tiered-subscription
+delivery:
+  delivery: managed+licensed
+  method: page
+  read: '2026-10-07'
+  evidence: BYOC or on-premises deployments
+  managed_tier: Team
+published: true
+note: Tiered plans with usage overages for storage and sandbox minutes; prices shown for AWS US East (N.
+  Virginia); volume discounts over 50 TB.
+plan_count: 5
+currency: USD
+plans:
+- name: Developer
+  price_text: $0 /month
+  price: 0
+  currency: USD
+  period: month
+  included_quota: Performance storage 10 GB; Sandboxes 30 min; File systems Up to 5
+  overage: then $0.30 / GB-mo storage; then $0.27 / hr sandboxes
+- name: Team
+  price_text: $500 /month
+  price: 500
+  currency: USD
+  period: month
+  included_quota: Performance storage 1 TB; Sandboxes 1,000 min; File systems Unlimited
+  overage: then $0.20 / GB-mo storage; then $0.18 / hr sandboxes
+- name: Enterprise
+  price_text: Custom
+  period: none
+  included_quota: Unlimited storage with volume pricing; BYOC or on-premises deployments; 24/7 dedicated
+    support
+- name: Archive storage
+  price_text: $0.025 / GB-mo
+  price: 0.025
+  currency: USD
+  period: per-use
+  unit: GB-mo
+- name: Egress
+  price_text: $0.05 / GB
+  price: 0.05
+  currency: USD
+  period: per-use
+  unit: GB
+rate_limit_statements:
+- File systems Up to 5
+- Sandboxes are 2 vCPU · 4 GB RAM.
