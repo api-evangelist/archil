@@ -64,8 +64,134 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Archil is the cloud filesystem for AI — it turns an existing object-storage bucket (Amazon S3, GCS, Cloudflare R2, Azure Blob, MinIO, Wasabi, Backblaze B2, DigitalOcean Spaces) into an unlimited, POSIX-compatible local disk that thousands of machines can mount at once. It exposes a REST Control Plane API (OpenAPI 3.1) for managing disks, disk users, API tokens, and serverless execution, plus first-party TypeScript (`disk`) and Python (`archil`) SDKs, a `disk` CLI, a Linux `archil` mount CLI, a Kubernetes CSI driver, a Terraform provider, and an S3-compatible HTTP API.
+Archil is the cloud filesystem for AI. It turns an existing object-storage bucket (Amazon S3, Google Cloud Storage, Cloudflare R2, Azure Blob, MinIO, Wasabi, Backblaze B2, DigitalOcean Spaces) into an unlimited, POSIX-compatible local disk that thousands of machines can mount at once — live, in place, and faster than local disk. A single multi-tenant "disk" caches active data in a high-speed layer, supports copy-on-write branches and checkpoints for isolated agent and CI fan-out, and can run serverless bash and parallel grep directly against the data with no separate sandbox. Archil exposes a REST Control Plane API for managing disks, disk users, API tokens, and serverless execution, plus first-party TypeScript and Python SDKs, a `disk` CLI, a Linux `archil` mount CLI, a Kubernetes CSI driver, a Terraform provider, and an S3-compatible HTTP API. Founded 2024, backed by Felicis, Y Combinator, General Catalyst, Peak XV, and Standard Capital. Added to the API Evangelist network from the Felicis portfolio and enriched by the pipeline.
 
-Backed by: felicis — https://archil.com
+**Areas:** Company · Cloud Storage · Filesystem · Object Storage · Artificial Intelligence · Infrastructure · Developer Tools · Serverless · Data · S3
 
-Surfaced from the Felicis portfolio and enriched by the API Evangelist pipeline. See `apis.yml` for the full artifact index.
+## Archil on APIs.io
+
+Everything profiled for Archil is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/archil/](https://apis.io/providers/archil/)** — or go straight to one of the APIs or properties below.
+
+### APIs (4)
+
+- [Archil API Tokens API](https://apis.io/apis/archil/archil-api-tokens-api/) — Manage API keys (also called API tokens) used to authenticate Control Plane API requests. Distinct from disk tokens.
+- [Archil Disk Users API](https://apis.io/apis/archil/archil-disk-users-api/) — Manage authorized users on disks
+- [Archil Disks API](https://apis.io/apis/archil/archil-disks-api/) — Create, read, update, and delete disks
+- [Archil Serverless Execution API](https://apis.io/apis/archil/archil-serverless-execution-api/) — Run commands on a disk without provisioning compute
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [archil](https://apis.io/servers/archil/archil/)
+
+#### Collections (8)
+
+Postman and Open Collection request collections.
+
+- [Archil Control Plane API Tokens API](https://apis.io/collections/archil/open-archil-api-tokens-api/)
+- [Archil Control Plane API Tokens Disk Users API](https://apis.io/collections/archil/open-archil-disk-users-api/)
+- [Archil Control Plane API Tokens Disks API](https://apis.io/collections/archil/open-archil-disks-api/)
+- [Archil Control Plane API Tokens Serverless Execution API](https://apis.io/collections/archil/open-archil-serverless-execution-api/)
+- [Archil Control Plane API Tokens API](https://apis.io/collections/archil/postman-archil-api-tokens-api/)
+- [Archil Control Plane API Tokens Disk Users API](https://apis.io/collections/archil/postman-archil-disk-users-api/)
+- [Archil Control Plane API Tokens Disks API](https://apis.io/collections/archil/postman-archil-disks-api/)
+- [Archil Control Plane API Tokens Serverless Execution API](https://apis.io/collections/archil/postman-archil-serverless-execution-api/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Archil Controlplane Overlay](https://apis.io/overlays/archil/archil-controlplane-overlay/)
+
+#### Security (4)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Archil Authentication](https://apis.io/security/archil/archil-authentication/)
+- [Archil Domain Security](https://apis.io/security/archil/archil-domain-security/)
+- [Archil Trust Center](https://apis.io/security/archil/archil-trust-center/)
+- [Archil Vulnerability Disclosure](https://apis.io/security/archil/archil-vulnerability-disclosure/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Archil Plans Pricing](https://apis.io/plans/archil/archil-plans-pricing/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://archil.com)
+- [Documentation](https://docs.archil.com)
+- [Getting started](https://docs.archil.com/getting-started/quickstart)
+- [API reference](https://docs.archil.com/api-reference/introduction)
+- [Pricing](https://archil.com/pricing)
+- [Sign up](https://console.archil.com)
+- [Blog](https://archil.com/blog)
+- [Security](https://docs.archil.com/details/security)
+- [Compliance](https://docs.archil.com/details/security)
+- [Terms of service](https://archil.com/terms-of-service)
+- [Privacy policy](https://archil.com/privacy-policy)
+- [GitHub](https://github.com/archil-data)
+- [Status](https://status.archil.com)
+
+## API Evangelist rating
+
+**Kin Score 62.8** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 73.2 |
+| Contract quality | 53.3 |
+| Contract governance | 18.2 |
+| Operational transparency | 36.8 |
+| Developer ergonomics | 74.4 |
+| Access clarity | 92.1 |
+
+**Agent readiness 29.4** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | documented (partial credit) |
+| Error Semantics | verified |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | paginated |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 32.7** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/archil/](https://apis.io/providers/archil/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Archil: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/archil/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
